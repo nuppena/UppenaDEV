@@ -1,0 +1,2 @@
+sap.ui.define(["./CoreService"],function(t){"use strict";let e=t.extend("ns.projectpcf.service.PackagingService",{constructor:function(e){t.call(this,e)},uploadData:function(t){return this.odata("/saveData").post(t)}});return e});
+//# sourceMappingURL=PackagingService.js.map

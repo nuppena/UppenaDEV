@@ -1,0 +1,210 @@
+<mvc:View
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
+  xmlns:smartTable="sap.ui.comp.smarttable"
+  xmlns:core="sap.ui.core" xmlns:u="sap.ui.unified"  xmlns:f="sap.f"
+  xmlns="sap.m" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+  controllerName="pcf.com.acc.packaging.controller.Packaging">
+  <Page id="page1" showHeader="true"  title="Emission Factor Mapping" titleAlignment="Center">
+   <content>
+  <Panel >
+                    <VBox class="sapUiSmallMargin">
+                   <HBox justifyContent="End" alignItems="Center" class="sapUiSmallMarginBottom">
+                            <Button text="Run"  type="Emphasized" press="onExecute" class="sapUiTinyMarginEnd"/>
+                            <Button text="Save Progress" type="Emphasized" press="onSaveChanges" />
+     
+                        </HBox>
+                    </VBox>
+                     <VBox class="sapUiSmallMargin">
+                   <HBox justifyContent="End" alignItems="Center" class="sapUiSmallMarginBottom">
+                          
+                            <Button text="Download Template" type="Transparent" press="onDownloadTemplate" class="sapUiTinyMarginEnd"/>
+                            <Button text="Import" type="Transparent" press="onOpenUploadDialog" class="sapUiTinyMarginEnd"/>
+                             <Button text="Export" type="Transparent" press="onExport" class="sapUiTinyMarginEnd"/>
+                             <!--<Button text="Run"  type="Emphasized" press="onExecute"/>-->
+     
+                        </HBox>
+                    </VBox>
+  </Panel>
+       
+          <Panel >
+<smartFilterBar:SmartFilterBar
+      id="smartFilterBar"
+      entitySet="EFData"
+      liveMode="false"
+    enableBasicSearch="true"
+      persistencyKey="EFCalculationFilter"
+       >
+        
+  </smartFilterBar:SmartFilterBar>
+    <smartTable:SmartTable
+      id="smartTable"
+      entitySet=" "
+      smartFilterId="smartFilterBar"
+      tableType="Table"
+      enableExport="true"
+      useVariantManagement="true"
+      useTablePersonalisation="true"
+      header="List of Packaging EF"
+      editable="true"
+      enableAutoBinding="false"
+      persistencyKey="EFSmartTable"
+      requestAtLeastFields="SiteID,ErrorStatus"
+      tableBindingPath="/results"
+      app:p13nDialogSettings="{group:{visible:false}}"
+      >
+                <smartTable:customToolbar>
+                <Toolbar design="Transparent">
+                    <ToolbarSpacer />
+                    	<OverflowToolbarButton icon="sap-icon://filter" tooltip="Filter" text="Filter" press="onFilter"/>
+                    
+                </Toolbar>
+            </smartTable:customToolbar>
+            <Table id="table" items ="{excelData>/results}" enableBusyIndicator="true">
+          <!-- <columns>
+          <Column><Text text="Site ID" wrapping="true"/></Column>
+          <Column><Text text="Country Name" /></Column>
+          <Column><Text text="Material ID" /></Column>
+          <Column><Text text="Material Name" /></Column>
+          <Column><Text text="Short Description" /></Column>
+          <Column><Text text="Weight" wrapping="true" /></Column>
+          <Column><Text text= "Weight Unit" /></Column>
+          <Column><Text text= "Spend(Millions)" /></Column>
+          <Column><Text text= "Spend Currency Unit" /></Column>
+          <Column><Text text= "Mapped Activity ID" /></Column>
+          <Column><Text text="Total Emissions (kgCO₂e)" /></Column>
+          <Column><Text text="Edit" /></Column>
+          <Column><Text text="Error Status" /></Column>
+        </columns> -->
+      <columns>
+              <Column id="Kunnr" hAlign="Begin" width="100px"  >
+                <customData>
+                  <core:CustomData key="p13nData" value='{"columnKey":"SiteID","leadingProperty":"Site ID","columnIndex":0,"filterProperty":"SiteID","sortProperty":"SiteID"}'/>
+                </customData>
+                <Text text="Site ID"/>
+              </Column>
+
+              <Column id="Dmbtr" hAlign="Begin" width="110px">
+                <customData>
+                  <core:CustomData key="p13nData" value='{"columnKey":"CountryName","leadingProperty":"Country Name","columnIndex":1,"filterProperty":"Country Name","sortProperty":"Country Name"}'/>
+                </customData>
+                <Text text="Country Name"/>
+              </Column>
+
+              <Column id="MaterialID" width="100px" hAlign="Begin">
+                <customData>
+                  <core:CustomData key="p13nData" value='{"columnKey":"MaterialID","leadingProperty":"Material ID","columnIndex":2,"filterProperty":"Material ID","sortProperty":"Material ID"}'/>
+                </customData>
+                <Text text="Material ID"/>
+              </Column>
+
+              <Column id="MaterialName" width="110px" hAlign="Begin">
+                <customData>
+                  <core:CustomData key="p13nData" value='{"columnKey":"MaterialName","leadingProperty":"Material Name","columnIndex":3,"filterProperty":"Material Name","sortProperty":"Material Name"}'/>
+                </customData>
+                <Text text="Material Name"/>
+              </Column>
+
+              <Column  id="ShortDescription" width="130px" hAlign="Begin">
+                <customData>
+                  <core:CustomData key="p13nData" value='{"columnKey":"ShortDescription","leadingProperty":"Short Description","columnIndex":4,"filterProperty":"Short Description","sortProperty":"Short Description"}'/>
+                </customData>
+                <Text text="Short Description"/>
+              </Column>
+
+              <Column id="Weight" width="80px" hAlign="Begin">
+                <customData>
+                  <core:CustomData key="p13nData" value='{"columnKey":"Weight","leadingProperty":"Weight","columnIndex":5,"filterProperty":"Weight","sortProperty":"Weight","type":"numeric"}'/>
+                </customData>
+                <Text text="Weight"/>
+              </Column>
+
+              <Column  id="WeightUnit" hAlign="Begin">
+                <customData>
+                  <core:CustomData key="p13nData" value='{"columnKey":"WeightUnit","leadingProperty":"Weight Unit","columnIndex":6,"filterProperty":"Weight Unit","sortProperty":"Weight Unit"}'/>
+                </customData>
+                <Text text="Weight Unit"/>
+              </Column>
+
+              <Column id="Spend" hAlign="Begin">
+                <customData>
+                  <core:CustomData key="p13nData" value='{"columnKey":"Spend","leadingProperty":"Spend(in Millions)","columnIndex":7,"filterProperty":"Spend(in Millions)","sortProperty":"Spend(in Millions)","type":"numeric"}'/>
+                </customData>
+                <Text text="Spend (Millions)"/>
+              </Column>
+
+              <Column id="SpendCurrencyUnit" width="130px" hAlign="Begin">
+                <customData>
+                  <core:CustomData key="p13nData" value='{"columnKey":"SpendCurrencyUnit","leadingProperty":"Spend Currency Unit","columnIndex":8,"filterProperty":"Spend Currency Unit","sortProperty":"Spend Currency Unit"}'/>
+                </customData>
+                <Text text="Spend Currency Unit"/>
+              </Column>
+
+              <Column id="MappedActivityID" hAlign="Begin">
+                <customData>
+                  <core:CustomData key="p13nData" value='{"columnKey":"MappedActivityID","leadingProperty":"Mapped Activity ID","columnIndex":9,"filterProperty":"Mapped Activity ID","sortProperty":"Mapped Activity ID"}'/>
+                </customData>
+                <Text text="Mapped Activity ID"/>
+              </Column>
+
+              <Column id="TotalEmissions" hAlign="Begin">
+                <customData>
+                  <core:CustomData key="p13nData" value='{"columnKey":"TotalEmissions","leadingProperty":"Total Emissions (kgCO₂e)","columnIndex":10,"filterProperty":"Total Emissions (kgCO₂e)","sortProperty":"Total Emissions (kgCO₂e)","type":"numeric"}'/>
+                </customData>
+                <Text text="Total Emissions (kgCO₂e)"/>
+              </Column>
+
+              <Column id="Edit" hAlign="Center" width="50px">
+                <customData>
+                  <core:CustomData key="p13nData" value='{"columnKey":"Edit","leadingProperty":"Edit","columnIndex":11}'/>
+                </customData>
+                <Text text="Edit"/>
+              </Column>
+
+              <Column  id="ErrorStatus" hAlign="Begin">
+                <customData>
+                  <core:CustomData key="p13nData" value='{"columnKey":"ErrorStatus","leadingProperty":"Error Status","columnIndex":12,"filterProperty":"Error Status","sortProperty":"Error Status"}'/>
+                </customData>
+                <Text text="Error Status"/>
+              </Column>
+            </columns>
+
+	
+
+			<items>
+				<ColumnListItem>
+					<cells>
+						<!-- <Text text="({Kunnr}) {Name1}" />
+					</cells>
+					<cells>
+						<Text
+							text="{Dmbtr} {Hwaer}" /> -->
+              <Text text="{excelData>Site ID}" />
+        <Text text="{excelData>Country Name}" />
+        <Text text="{excelData>Material ID}" />
+        <Text text="{excelData>Material Name}" />
+        <Text text="{excelData>Short Description}" />
+        <Text text="{excelData>Weight}" />
+        <Text text="{excelData>Weight Unit}" />
+        <Text text="{excelData>Spend(in Millions)}" />
+        <Text text="{excelData>Spend Currency Unit}" />
+        <ComboBox items="{excelData>Mapped Activity ID}" >
+        <core:Item key="{key}" text="{text}" /></ComboBox>
+        <Text text="{excelData>Total Emissions (kgCO₂e)}" />
+       
+        <Button icon="sap-icon://edit" tooltip="Edit" press="onEditPress" />
+        <Text text="{excelData>Error Status}" />
+
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+      
+    </smartTable:SmartTable>
+</Panel>
+        </content>
+          
+        
+  
+ </Page>
+</mvc:View>

@@ -1,0 +1,162 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" 
+xmlns="sap.m" xmlns:core="sap.ui.core"
+ xmlns:f="sap.f" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar" 
+ xmlns:smartTable="sap.ui.comp.smarttable" xmlns:table="sap.ui.table"  xmlns:u="sap.ui.unified"
+ xmlns:variants="sap.ui.comp.smartvariants" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+ controllerName="pcf.com.acc.packaging.controller.Packaging"
+    >
+    <Page id="page" >
+        <content>   
+
+   
+		<!-- <VBox fitContainer="true"> -->
+		  <Toolbar  design="Transparent">
+          <HBox>
+
+                        <VBox id="boxV1000BoxId" class="sapUiResponsiveMargin">
+                        <Label id="txtV1000UploadDescribeId" text="{i18n>uploadPath}" required="true"/>
+                        <u:FileUploader id="fuV1000FileUploaderId" name="myFileUpload" width="32rem" uploadUrl="upload/" typeMissmatch="handleTypeMissmatch" uploadComplete="handleUploadComplete" change="handleValueChange" buttonText="{i18n>Upload}" fileType="xlsx,csv" style="Emphasized"/>
+ 
+                         
+                    </VBox>     
+                       
+                          <Button id="_IDGenButton2" type="Emphasized" text="{i18n>Import}" press="onExecute"/>
+                 <Button id="_IDGenButton1" type="Emphasized" text="{i18n>Download}" press="onDownload"/>
+                        <Button id="ZbtnRepeat" type="Emphasized" tooltip="{i18n>delete}" enabled="true" text="{i18n>Export}" press="onDeleteSelection" />
+                      </HBox>
+                      </Toolbar>
+                     
+                      <!-- </VBox> -->
+			<!-- <smartFilterBar:SmartFilterBar id="smartFilterBar" entitySet="AgingDelivery" enableBasicSearch="false" persistencyKey="keySmartFilter"  useToolbar="true" showFilterConfiguration="false">
+                  <smartFilterBar:controlConfiguration>
+                     <smartFilterBar:ControlConfiguration key="SiteID" mandatory="mandatory"
+                        visibleInAdvancedArea="true" index="0" 	label="{i18n>SiteID}">
+                     <smartFilterBar:customControl>
+								 <MultiInput
+                                        id="inpSiteID"
+                                        width="90%" required="true"
+                                        showValueHelp="true"
+                                        valueHelpRequest="SiteID"
+                                        suggestionItems="{/SiteID}"
+                                        tokenUpdate=".onSiteIDTokenUpdate"
+                                    >
+                                        <suggestionItems>
+                                            <core:ListItem
+                                                key="{SiteID}"
+                                                text="{SiteIDName}"
+                                            />
+                                        </suggestionItems>
+                                    </MultiInput>
+							</smartFilterBar:customControl>
+                     </smartFilterBar:ControlConfiguration>
+					  
+                </smartFilterBar:controlConfiguration>
+                <smartFilterBar:layoutData>
+					<FlexItemData shrinkFactor="0"/>
+				</smartFilterBar:layoutData>
+            </smartFilterBar:SmartFilterBar>
+            
+      
+            <smartTable:SmartTable
+                id="smartTable"
+                initiallyVisibleFields=""
+                 entitySet=""
+                smartFilterId="smartFilterBar"
+                tableType="Table"
+                useVariantManagement="false"
+                useTablePersonalisation="true"
+                header="{i18n>items}"
+                enableExport="true"
+                showRowCount="true"
+                persistencyKey="UniqueAndStablePersistencyKey"
+                enableAutoBinding="false"
+                class="sapUiResponsiveContentPadding"
+                enableAutoColumnWidth="true"
+                editTogglable="false"
+                beforeRebindTable="onBeforeRebindTable"
+               
+            >
+               <smartTable:customToolbar>
+                    <Toolbar  design="Transparent">
+                        <VBox id="boxV1000BoxId" class="sapUiResponsiveMargin">
+                        <Label id="txtV1000UploadDescribeId" text="{i18n>uploadPath}" required="true"/>
+                        <u:FileUploader id="fuV1000FileUploaderId" name="myFileUpload" width="32rem" uploadUrl="upload/" typeMissmatch="handleTypeMissmatch" uploadComplete="handleUploadComplete" change="handleValueChange" buttonText="{i18n>Upload}" fileType="xlsx,csv" style="Emphasized"/>
+ 
+                         
+                    </VBox>     
+                        <ToolbarSpacer />
+                          <Button id="_IDGenButton2" type="Emphasized" text="{i18n>Import}" press="onExecute"/>
+                 <Button id="_IDGenButton1" type="Emphasized" text="{i18n>Download}" press="onDownload"/>
+                        <Button id="ZbtnRepeat" type="Emphasized" tooltip="{i18n>delete}" enabled="true" text="{i18n>Export}" press="onDeleteSelection" />
+                      </Toolbar>
+                </smartTable:customToolbar>
+                
+                         <smartTable:layoutData>
+					 <FlexItemData growFactor="10" baseSize="0%"/> 
+				</smartTable:layoutData>
+                 </smartTable:SmartTable>
+		</VBox> -->
+		            
+     
+                          </content>
+      
+    </Page>
+</mvc:View>
+
+
+<mvc:View xmlns:mvc="sap.ui.core.mvc" 
+xmlns="sap.m" xmlns:core="sap.ui.core"
+ xmlns:f="sap.f" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar" 
+ xmlns:smartTable="sap.ui.comp.smarttable" xmlns:table="sap.ui.table"  xmlns:u="sap.ui.unified"
+ xmlns:variants="sap.ui.comp.smartvariants" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+ controllerName="pcf.com.acc.packaging.controller.Packaging"
+    >
+    <Page id="page" >
+    <f:DynamicPage id="dynamicPageId" headerExpanded="true" headerPinned="true">
+
+            
+            <f:header>
+                <f:DynamicPageHeader>
+                    <VBox class="sapUiSmallMargin">
+
+                        
+                        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiSmallMarginBottom">
+                            
+                            <HBox alignItems="Center">
+                                 <Label text="Site ID" labelFor="siteIdInput"/>
+        <Input id="siteIdInput" width="200px" class="sapUiSmallMarginBegin sapUiSmallMarginEnd"/>
+        
+        <Label text="Error Status" labelFor="errorStatusInput"/>
+        <Input id="errorStatusInput" width="200px" class="sapUiSmallMarginBegin"/>
+                            </HBox>
+
+                            
+                            <Button text="Save Progress" icon="sap-icon://save" type="Emphasized" press="onSaveProgress"/>
+                        </HBox>
+<HBox id="boxV1000BoxId" class="sapUiResponsiveMargin">
+<Label id="txtV1000UploadDescribeId" text="{i18n>uploadPath}" required="true"/>
+                        <u:FileUploader id="fuV1000FileUploaderId" name="myFileUpload" width="32rem" uploadUrl="upload/" typeMissmatch="handleTypeMissmatch" uploadComplete="handleUploadComplete" change="handleValueChange" buttonText="{i18n>Upload}" fileType="xlsx,csv" style="Emphasized"/>
+ 
+                        
+                    </HBox>   
+                        
+                        <HBox justifyContent="Start" alignItems="Center" class="sapUiSmallMarginBottom">
+                            <Button text="Download Template" type="Transparent" press="onDownloadTemplate" class="sapUiTinyMarginEnd"/>
+                            <Button text="Import" type="Transparent" press="onExecute" class="sapUiTinyMarginEnd"/>
+                            <Button text="Adapt filters" type="Transparent" press="onAdaptFilters" class="sapUiTinyMarginEnd"/>
+                            <Button text="Export" type="Transparent" press="onExport"/>
+                        </HBox>
+
+                    </VBox>
+                </f:DynamicPageHeader>
+            </f:header>
+
+            
+
+        </f:DynamicPage>   
+
+		            
+     
+                         
+    </Page>
+</mvc:View>
