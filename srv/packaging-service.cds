@@ -1,7 +1,7 @@
 service PackagingEFCalculation {
 
      action uploadFile( payload : array of fileUpload) returns array of resultMessage;
-     action saveData() returns array of resultMessage;
+     action saveData() returns String;
  type fileUpload : {
     data       : LargeString;
     

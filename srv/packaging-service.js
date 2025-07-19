@@ -37,17 +37,11 @@ module.exports = async (srv) => {
           "User Name": "debjit_123"
           };
 
-        try {
-          return await executeHttpRequest({destinationName: 'AWSAPI'}, 
-          {
-            method: 'POST',
-            url: "/api/fetch",
-            data: yourData                 });
-          } 
-          catch (e) 
-          {           
-           console.error(e);
-          }
-          
+        
+          const awsConnect= await cds.connect.to("AWSAPI");
+
+return await awsConnect.tx(request).post("/api/fetch",
+  yourData
+)
       });
 };

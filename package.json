@@ -38,9 +38,14 @@
         "plugin": true
       },
       "AWSAPI": {
-        "kind": "destination",
+        "kind": "rest",
         "credentials": {
           "destination": "AWS_PCF_BACKEND_API"
+        },
+        "auth": {
+          "passport": {
+            "strategy": "JWT"
+          }
         }
       },
       "connectivity": true,
