@@ -38,7 +38,7 @@ module.exports = async (srv) => {
           };
 
         
-          const awsConnect= await cds.connect.to("AWSAPI");
+const awsConnect= await cds.connect.to("AWSAPI");
 
 return await awsConnect.tx(request).post("/api/fetch",
   yourData

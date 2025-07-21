@@ -22,7 +22,7 @@
       "destination": "ui5"
     },
     {
-      "source": "^/srv-api/(.*)$",
+      "source": "^/srv-api/(.*)$", 
       "target": "$1",
       "authenticationType": "xsuaa",
       "destination": "zbuPackaging-srv",

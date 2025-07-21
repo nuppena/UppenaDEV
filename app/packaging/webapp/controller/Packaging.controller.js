@@ -1,8 +1,9 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/ui/core/BusyIndicator",
-    "sap/m/MessageBox"
-], (Controller,BusyIndicator,MessageBox) => {
+    "sap/m/MessageBox",
+    "pcf/com/acc/packaging/service/odataHelper"
+], (Controller,BusyIndicator,MessageBox,odataHelper) => {
     "use strict";
 
     return Controller.extend("pcf.com.acc.packaging.controller.Packaging", {
@@ -13,24 +14,48 @@ sap.ui.define([
           this.PackagingService = this.getOwnerComponent().getService("Packaging");   
         },
         onSaveChanges: function () {
-            const oModel = this.getView().getModel("excelData");
+            // const oModel = this.getView().getModel("excelData");
 
-            if (!oModel || !oModel.getData().results || oModel.getData().results.length === 0) {
-                MessageBox.warning("No data available to save.");
-                return;
-            }
+            // if (!oModel || !oModel.getData().results || oModel.getData().results.length === 0) {
+            //     MessageBox.warning("No data available to save.");
+            //     return;
+            // }
 
-            const aData = oModel.getData().results;
+            // const aData = oModel.getData().results;
+            
 
+            // const savePayload = {
+            //   "User Name": "uppena.nagaraju",
+            //   "Industry": "Dairy",
+            //   "Material Details":aData
+            // }
+
+            var oModel1 = this.getOwnerComponent().getModel();
+           
+          odataHelper.readData(oModel1, "/saveData")
+                .then(function(oData) {
+                    // Handle successful data retrieval
+                    console.log("Data received:", oData);
+                    // Example:  Bind the data to a control
+                    // this.getView().byId("myTable").setModel(new sap.ui.model.json.JSONModel(oData));
+                })
+                .catch(function(oError) {
+                    // Handle the error
+                    console.error("Error reading data:", oError);
+                    // Display an error message, etc.
+                });
+         
+          //console.log("Response Datadsdsdsdsdsdsds");
+          
             // Convert JSON data to Excel sheet
-            const worksheet = XLSX.utils.json_to_sheet(aData);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "Updated Data");
+            // const worksheet = XLSX.utils.json_to_sheet(aData);
+            // const workbook = XLSX.utils.book_new();
+            // XLSX.utils.book_append_sheet(workbook, worksheet, "Updated Data");
 
             //  download of the updated Excel file
-            XLSX.writeFile(workbook, "Updated_PackagingData.xlsx");
+            //XLSX.writeFile(workbook, "Updated_PackagingData.xlsx");
 
-            MessageBox.success("Changes saved successfully!");
+            //MessageBox.success("Changes saved successfully!");
         },
         onDownloadTemplate: function(){
           var fileName = "PackagingTemplate.xlsx";
