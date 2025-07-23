@@ -30,7 +30,7 @@
           <Panel >
 <smartFilterBar:SmartFilterBar
       id="smartFilterBar"
-      entitySet="EFData"
+      entitySet="saveData"
       liveMode="false"
     enableBasicSearch="true"
       persistencyKey="EFCalculationFilter"
@@ -39,7 +39,7 @@
   </smartFilterBar:SmartFilterBar>
     <smartTable:SmartTable
       id="smartTable"
-      entitySet=" "
+      entitySet="/saveData"
       smartFilterId="smartFilterBar"
       tableType="Table"
       enableExport="true"
@@ -140,7 +140,7 @@
                 <Text text="Spend Currency Unit"/>
               </Column>
 
-              <Column id="MappedActivityID" hAlign="Begin">
+              <Column id="MappedActivityID" hAlign="Begin" width="100px">
                 <customData>
                   <core:CustomData key="p13nData" value='{"columnKey":"MappedActivityID","leadingProperty":"Mapped Activity ID","columnIndex":9,"filterProperty":"Mapped Activity ID","sortProperty":"Mapped Activity ID"}'/>
                 </customData>
@@ -149,7 +149,7 @@
 
               <Column id="TotalEmissions" hAlign="Begin">
                 <customData>
-                  <core:CustomData key="p13nData" value='{"columnKey":"TotalEmissions","leadingProperty":"Total Emissions (kgCO₂e)","columnIndex":10,"filterProperty":"Total Emissions (kgCO₂e)","sortProperty":"Total Emissions (kgCO₂e)","type":"numeric"}'/>
+                  <core:CustomData key="p13nData" value='{"columnKey":"Total Emission","leadingProperty":"Total Emission","columnIndex":10,"filterProperty":"Total Emissions (kgCO₂e)","sortProperty":"Total Emissions (kgCO₂e)"}'/>
                 </customData>
                 <Text text="Total Emissions (kgCO₂e)"/>
               </Column>
@@ -174,11 +174,6 @@
 			<items>
 				<ColumnListItem>
 					<cells>
-						<!-- <Text text="({Kunnr}) {Name1}" />
-					</cells>
-					<cells>
-						<Text
-							text="{Dmbtr} {Hwaer}" /> -->
               <Text text="{excelData>Site ID}" />
         <Text text="{excelData>Country Name}" />
         <Text text="{excelData>Material ID}" />
@@ -188,8 +183,18 @@
         <Text text="{excelData>Weight Unit}" />
         <Text text="{excelData>Spend(in Millions)}" />
         <Text text="{excelData>Spend Currency Unit}" />
-        <ComboBox items="{excelData>Mapped Activity ID}" >
-        <core:Item key="{key}" text="{text}" /></ComboBox>
+       <VBox>
+       <Select width="100%"
+  selectedKey="{excelData>mapped_activity_id}"
+  change=".onMappedActivityChange"
+  items="{excelData>top_activity_ids}"
+>
+  <core:ListItem
+    key="{excelData>activity_id}"
+    text="{excelData>activity_id}"
+  />
+</Select>
+ </VBox>
         <Text text="{excelData>Total Emissions (kgCO₂e)}" />
        
         <Button icon="sap-icon://edit" tooltip="Edit" press="onEditPress" />

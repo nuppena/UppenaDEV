@@ -33,13 +33,29 @@ sap.ui.define([
             var oModel1 = this.getOwnerComponent().getModel();
            
           odataHelper.readData(oModel1, "/saveData")
-                .then(function(oData) {
-                    // Handle successful data retrieval
-                    console.log("Data received:", oData);
-                    // Example:  Bind the data to a control
-                    // this.getView().byId("myTable").setModel(new sap.ui.model.json.JSONModel(oData));
-                })
-                .catch(function(oError) {
+                // .then(function(oData)=> {
+                //     // Handle successful data retrieval
+                //     console.log("Data received:", oData);
+                //     // Example:  Bind the data to a control
+                //     // this.getView().byId("myTable").setModel(new sap.ui.model.json.JSONModel(oData));
+                // })
+                .then((oData) => {
+                  // Arrow function preserves 'this'
+                  console.log("Data received:", oData);
+                  var aTableData = oData.saveData.result;
+                  aTableData.forEach(row => {
+                    const match = row.top_activity_ids.find(item => item.result_id === row.active_result_id);
+                    row.mapped_activity_id = match ? match.activity_id : null;
+                  });
+                  var oModel = new sap.ui.model.json.JSONModel({ results: aTableData });
+
+                  // Set to a named model
+                  this.getView().setModel(oModel, "excelData");
+                  //this.getView().byId("table").setModel(new sap.ui.model.json.JSONModel(oData));
+                 // this.getView().byId("smartTable").rebindTable();
+                  this.getView().getModel().refresh(true);
+              })
+              .catch((oError) => {
                     // Handle the error
                     console.error("Error reading data:", oError);
                     // Display an error message, etc.
