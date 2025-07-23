@@ -114,7 +114,7 @@
 
               <Column id="Weight" width="80px" hAlign="Begin">
                 <customData>
-                  <core:CustomData key="p13nData" value='{"columnKey":"Weight","leadingProperty":"Weight","columnIndex":5,"filterProperty":"Weight","sortProperty":"Weight","type":"numeric"}'/>
+                   <core:CustomData key="p13nData" value='{"columnKey":"Weight","leadingProperty":"Weight","columnIndex":5,"filterProperty":"Weight","sortProperty":"Weight","type":"numeric"}'/>         
                 </customData>
                 <Text text="Weight"/>
               </Column>
@@ -181,8 +181,9 @@
         <Text text="{excelData>Short Description}" />
         <Text text="{excelData>Weight}" />
         <Text text="{excelData>Weight Unit}" />
-        <Text text="{excelData>Spend(in Millions)}" />
+        <Text text="{excelData>Spend (in Millions)}" />
         <Text text="{excelData>Spend Currency Unit}" />
+        <Text text="{excelData>Total Emission}" />
        <VBox>
        <Select width="100%"
   selectedKey="{excelData>mapped_activity_id}"
