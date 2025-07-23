@@ -11,7 +11,7 @@
                     <VBox class="sapUiSmallMargin">
                    <HBox justifyContent="End" alignItems="Center" class="sapUiSmallMarginBottom">
                             <Button text="Run"  type="Emphasized" press="onExecute" class="sapUiTinyMarginEnd"/>
-                            <Button text="Save Progress" type="Emphasized" press="onSaveChanges" />
+                            <Button text="Save" type="Emphasized" press="onSaveChanges" />
      
                         </HBox>
                     </VBox>
@@ -128,7 +128,7 @@
 
               <Column id="Spend" hAlign="Begin">
                 <customData>
-                  <core:CustomData key="p13nData" value='{"columnKey":"Spend","leadingProperty":"Spend(in Millions)","columnIndex":7,"filterProperty":"Spend(in Millions)","sortProperty":"Spend(in Millions)","type":"numeric"}'/>
+                  <core:CustomData key="p13nData" value='{"columnKey":"Spend","leadingProperty":"Spend (in Millions)","columnIndex":7,"filterProperty":"Spend(in Millions)","sortProperty":"Spend(in Millions)","type":"numeric"}'/>
                 </customData>
                 <Text text="Spend (Millions)"/>
               </Column>
