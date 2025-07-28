@@ -128,21 +128,21 @@
 
               <Column id="Spend" hAlign="Begin">
                 <customData>
-                  <core:CustomData key="p13nData" value='{"columnKey":"Spend","leadingProperty":"Spend (in Millions)","columnIndex":7,"filterProperty":"Spend(in Millions)","sortProperty":"Spend(in Millions)","type":"numeric"}'/>
+                  <core:CustomData key="p13nData" value='{"columnKey":"Spend (in Millions","leadingProperty":"Spend (in Millions)","columnIndex":7,"filterProperty":"Spend(in Millions)","sortProperty":"Spend(in Millions)"}'/>
                 </customData>
                 <Text text="Spend (Millions)"/>
               </Column>
 
-              <Column id="SpendCurrencyUnit" width="130px" hAlign="Begin">
+              <Column id="SpendCurrencyUnit" width="100px" hAlign="Begin">
                 <customData>
                   <core:CustomData key="p13nData" value='{"columnKey":"SpendCurrencyUnit","leadingProperty":"Spend Currency Unit","columnIndex":8,"filterProperty":"Spend Currency Unit","sortProperty":"Spend Currency Unit"}'/>
                 </customData>
                 <Text text="Spend Currency Unit"/>
               </Column>
 
-              <Column id="MappedActivityID" hAlign="Begin" width="100px">
+              <Column id="MappedActivityID" hAlign="Begin" width="130px">
                 <customData>
-                  <core:CustomData key="p13nData" value='{"columnKey":"MappedActivityID","leadingProperty":"Mapped Activity ID","columnIndex":9,"filterProperty":"Mapped Activity ID","sortProperty":"Mapped Activity ID"}'/>
+                  <core:CustomData key="p13nData" value='{"columnKey":"MappedActivityID","leadingProperty":"Mapped Activity ID","columnIndex":9,"filterProperty":"Mapped Activity ID","sortProperty":"Mapped Activity ID"}' tooltip="{MappedActivityID}"/>
                 </customData>
                 <Text text="Mapped Activity ID"/>
               </Column>
@@ -181,7 +181,7 @@
         <Text text="{excelData>Short Description}" />
         <Text text="{excelData>Weight}" />
         <Text text="{excelData>Weight Unit}" />
-        <Text text="{excelData>Spend(in Millions)}" />
+        <Text text="{excelData>Spend (in Millions)}" />
         <Text text="{excelData>Spend Currency Unit}" />
        <VBox>
        <Select width="100%"
@@ -195,7 +195,7 @@
   />
 </Select>
  </VBox>
-        <Text text="{excelData>Total Emissions (kgCO₂e)}" />
+        <Text text="{excelData>Total Emission}" />
        
         <Button icon="sap-icon://edit" tooltip="Edit" press="onEditPress" />
         <Text text="{excelData>Error Status}" />

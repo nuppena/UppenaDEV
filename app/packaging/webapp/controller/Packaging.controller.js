@@ -47,7 +47,7 @@ sap.ui.define([
             console.log("Response Datadsdsdsdsdsdsds" + JSON.stringify(matPost));
 
             const savePayload = {
-              "uName": "nagaraju_uppena",
+              "uName": "uppena",
               "Industry": "Dairy",
               "material":matPost
             }

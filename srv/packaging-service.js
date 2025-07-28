@@ -60,7 +60,7 @@ console.log("User Info" + user);
 
   srv.on('runAPI',async(request) =>{
     const yourData= {
-      "User Name": "nagaraju_uppena"
+      "User Name": "uppena"
       };
    const awsConnect= await cds.connect.to("AWSAPI");
    return await awsConnect.tx(request).post("/api/run",yourData)
@@ -69,7 +69,7 @@ console.log("User Info" + user);
 
   srv.on('fetchAPI',async(request) =>{
     const yourData= {
-       "User Name": "nagaraju_uppena"
+       "User Name": "uppena"
        };
     const awsConnect= await cds.connect.to("AWSAPI");
     return await awsConnect.tx(request).post("/api/fetch",yourData)
