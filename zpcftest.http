@@ -1,3 +1,9 @@
 #Send Request
-POST http://localhost:4004/odata/v2/packaging-efcalculation/saveData
-Accept: application/json
+POST http://localhost:4004/odata/v2/packaging-efcalculation/runAPI
+Content-Type: application/json
+
+
+#GET Request
+GET http://localhost:4004/odata/v2/packaging-efcalculation/userInfoUAA
+Content-Type: application/json
+

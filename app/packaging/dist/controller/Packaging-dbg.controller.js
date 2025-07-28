@@ -1,8 +1,9 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/ui/core/BusyIndicator",
-    "sap/m/MessageBox"
-], (Controller,BusyIndicator,MessageBox) => {
+    "sap/m/MessageBox",
+    "pcf/com/acc/packaging/service/odataHelper"
+], (Controller,BusyIndicator,MessageBox,odataHelper) => {
     "use strict";
 
     return Controller.extend("pcf.com.acc.packaging.controller.Packaging", {
@@ -10,9 +11,12 @@ sap.ui.define([
           var excelModel = new sap.ui.model.json.JSONModel();
           this.getView().setModel(excelModel, "excelData");   
           this.PackagingState = this.getOwnerComponent().getState("Packaging");
-          this.PackagingService = this.getOwnerComponent().getService("Packaging");   
+          this.PackagingService = this.getOwnerComponent().getService("Packaging");  
+          this.oGlobalBusyDialog = new sap.m.BusyDialog(); 
+          this.getUserInfo();
         },
         onSaveChanges: function () {
+          const that = this;
             const oModel = this.getView().getModel("excelData");
 
             if (!oModel || !oModel.getData().results || oModel.getData().results.length === 0) {
@@ -22,16 +26,101 @@ sap.ui.define([
 
             const aData = oModel.getData().results;
 
+           
+            const matPost = [];
+            for(let i=0;i<aData.length;i++){
+            
+              matPost.push({
+            "Site_ID": aData[i]['Site ID'],
+            "Country_Name": aData[i]['Country Name'],     
+            "Material_ID":aData[i]['Material ID'],
+            "Material_Name": aData[i]['Material Name'],
+            "Short_Description": aData[i]['Short Description'],
+            "Weight":aData[i]['Weight'],
+            "Weight_Unit":aData[i]['Weight Unit'],
+            "Spend":aData[i]['Spend (in Millions)'],
+            "Spend_Currency_Unit":aData[i]['Spend Currency Unit']
+              });
+
+            }
+            
+            console.log("Response Datadsdsdsdsdsdsds" + JSON.stringify(matPost));
+
+            const savePayload = {
+              "uName": "uppena.nagaraju",
+              "Industry": "Dairy",
+              "material":matPost
+            }
+
+            this.oGlobalBusyDialog.open();     
+      var oModel1 = this.getOwnerComponent().getModel();
+           
+          odataHelper.postData(oModel1, "/saveData", savePayload)
+               .then((oData) => {
+                
+                  if(oData.saveData.result == "Material details stored successfully."){
+                    that.onRunExecute();
+                  }
+                 
+              })
+              .catch((oError) => {
+                    // Handle the error
+                    console.error("Error reading data:", oError);
+                    this.oGlobalBusyDialog.close();
+                    // Display an error message, etc.
+                });
+         
+          
+          
             // Convert JSON data to Excel sheet
-            const worksheet = XLSX.utils.json_to_sheet(aData);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "Updated Data");
+            // const worksheet = XLSX.utils.json_to_sheet(aData);
+            // const workbook = XLSX.utils.book_new();
+            // XLSX.utils.book_append_sheet(workbook, worksheet, "Updated Data");
 
             //  download of the updated Excel file
-            XLSX.writeFile(workbook, "Updated_PackagingData.xlsx");
+            //XLSX.writeFile(workbook, "Updated_PackagingData.xlsx");
 
-            MessageBox.success("Changes saved successfully!");
+            //MessageBox.success("Changes saved successfully!");
         },
+        getUserInfo: function(){
+          var oModel1 = this.getOwnerComponent().getModel();
+           
+          odataHelper.getData(oModel1, "/userInfoUAA")
+               .then((oData) => {
+
+               console.log("Odata UserInf" + oData);
+               
+              })
+              .catch((oError) => {
+                    // Handle the error
+                    console.error("Error reading data:", oError);
+                    
+                    // Display an error message, etc.
+                });
+
+        },
+          onRunExecute: function(){
+            const that = this;
+          var oModel1 = this.getOwnerComponent().getModel();
+           
+          odataHelper.readData(oModel1, "/runAPI")
+               .then((oData) => {
+
+               // console.log("RUN PAYLOAD" + oData.saveData.result );
+
+                if(oData.runAPI.result == "Processing Completed"){
+                   that.onExecute();
+               }
+               
+              })
+              .catch((oError) => {
+                    // Handle the error
+                    console.error("Error reading data:", oError);
+                    that.oGlobalBusyDialog.close();
+                    // Display an error message, etc.
+                });
+
+          },
         onDownloadTemplate: function(){
           var fileName = "PackagingTemplate.xlsx";
           //  var sURL = sap.ui.require.toUrl(`zbue0004_massresui/DownloadTemplate/${fileName}`);
@@ -50,8 +139,40 @@ sap.ui.define([
 */
     onExecute: function () {
       const that = this;
+      var oModel1 = this.getOwnerComponent().getModel();
+           
+          odataHelper.readData(oModel1, "/fetchAPI")
+                // .then(function(oData)=> {
+                //     // Handle successful data retrieval
+                //     console.log("Data received:", oData);
+                //     // Example:  Bind the data to a control
+                //     // this.getView().byId("myTable").setModel(new sap.ui.model.json.JSONModel(oData));
+                // })
+                .then((oData) => {
+                  // Arrow function preserves 'this'
+                  console.log("Data received:", oData);
+                  var aTableData = oData.fetchAPI.result;
+                  aTableData.forEach(row => {
+                    const match = row.top_activity_ids.find(item => item.result_id === row.active_result_id);
+                    row.mapped_activity_id = match ? match.activity_id : null;
+                  });
+                  var oModel = new sap.ui.model.json.JSONModel({ results: aTableData });
+
+                  // Set to a named model
+                  this.getView().setModel(oModel, "excelData");
+                  //this.getView().byId("table").setModel(new sap.ui.model.json.JSONModel(oData));
+                 // this.getView().byId("smartTable").rebindTable();
+                  this.getView().getModel().refresh(true);
+                  this.oGlobalBusyDialog.close();
+              })
+              .catch((oError) => {
+                    // Handle the error
+                    console.error("Error reading data:", oError);
+                    // Display an error message, etc.
+                    this.oGlobalBusyDialog.close();
+                });
      // this._chkFile().then(function () {
-        return that._uploadFileExecute();
+        //return that._uploadFileExecute();
      // });
     },
     _getFileUploader: function () {

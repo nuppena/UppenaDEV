@@ -17,7 +17,7 @@
     },
     "dataSources": {
       "mainService": {
-        "uri": "srv-api/odata/v2/packaging-efcalculation/",
+        "uri": "/odata/v2/packaging-efcalculation/",
         "type": "OData",
         "settings": {
           "annotations": [],
@@ -77,11 +77,13 @@
       },
       "": {
         "dataSource": "mainService",
+        "type": "sap.ui.model.odata.v2.ODataModel",
         "preload": true,
         "settings": {
           "operationMode": "Server",
           "autoExpandSelect": true,
-          "earlyRequests": true
+          "earlyRequests": true,
+          "useBatch": false
         }
       }
     },

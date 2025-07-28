@@ -10,8 +10,8 @@
   <Panel >
                     <VBox class="sapUiSmallMargin">
                    <HBox justifyContent="End" alignItems="Center" class="sapUiSmallMarginBottom">
-                            <Button text="Run"  type="Emphasized" press="onExecute" class="sapUiTinyMarginEnd"/>
-                            <Button text="Save" type="Emphasized" press="onSaveChanges" />
+                            <Button text="Run"  type="Emphasized" press="onSaveChanges" class="sapUiTinyMarginEnd"/>
+                            <!-- <Button text="Save" type="Emphasized" press="onSaveChanges" /> -->
      
                         </HBox>
                     </VBox>

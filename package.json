@@ -34,6 +34,13 @@
       "uaa": {
         "kind": "xsuaa"
       },
+      "xsuaa_api": {
+        "kind": "rest",
+        "credentials": {
+        "url": "<from XSUAA service binding>",
+        "forwardAuthToken" : true
+       }
+      },
       "cov2ap": {
         "plugin": true
       },
@@ -43,9 +50,7 @@
           "destination": "AWS_PCF_BACKEND_API"
         },
         "auth": {
-          "passport": {
-            "strategy": "JWT"
-          }
+          "kind": "jwt-auth"
         }
       },
       "connectivity": true,
