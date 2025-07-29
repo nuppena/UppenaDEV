@@ -1,9 +1,13 @@
 #Send Request
-POST http://localhost:4004/odata/v2/packaging-efcalculation/runAPI
+POST http://localhost:4004/odata/v2/packaging-efcalculation/editData
 Content-Type: application/json
 
-
-#GET Request
-GET http://localhost:4004/odata/v2/packaging-efcalculation/userInfoUAA
-Content-Type: application/json
+{
+    "editPayload":[
+    {  
+    "row_id":"103b480f-ad0b-4f90-8644-67ff6160c9ff",
+    "active_result_id": "c73b0ab4-c6d0-4cce-b0b2-6595a50fab76",
+    "Total_Emission": 100
+    }
+]}
 

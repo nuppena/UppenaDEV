@@ -184,13 +184,13 @@
         <Text text="{excelData>Spend (in Millions)}" />
         <Text text="{excelData>Spend Currency Unit}" />
        <VBox>
-       <Select width="100%"
-  selectedKey="{excelData>mapped_activity_id}"
+       <Select width="100%" enabled="{excelData>isDropdownEnabled}"
+  selectedKey="{excelData>active_result_id}"
   change=".onMappedActivityChange"
-  items="{excelData>top_activity_ids}"
+  items="{excelData>top_activity_ids}" tooltip="{excelData>mapped_activity_id}"
 >
   <core:ListItem
-    key="{excelData>activity_id}"
+    key="{excelData>result_id}"
     text="{excelData>activity_id}"
   />
 </Select>
@@ -198,7 +198,7 @@
         <Text text="{excelData>Total Emission}" />
        
         <Button icon="sap-icon://edit" tooltip="Edit" press="onEditPress" />
-        <Text text="{excelData>Error Status}" />
+        <Text text="{excelData>error_status}" />
 
 					</cells>
 				</ColumnListItem>

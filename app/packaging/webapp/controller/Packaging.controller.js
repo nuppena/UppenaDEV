@@ -9,11 +9,19 @@ sap.ui.define([
     return Controller.extend("pcf.com.acc.packaging.controller.Packaging", {
         onInit() {
           var excelModel = new sap.ui.model.json.JSONModel();
-          this.getView().setModel(excelModel, "excelData");   
+          this.getView().setModel(excelModel, "excelData");  
+         
+
           this.PackagingState = this.getOwnerComponent().getState("Packaging");
           this.PackagingService = this.getOwnerComponent().getService("Packaging");  
           this.oGlobalBusyDialog = new sap.m.BusyDialog(); 
           this.getUserInfo();
+        },
+        onAfterRendering: function(){
+          this.getView().getModel("excelData").setProperty("/isDropdownEnabled",false);    
+        },
+        onBeforeRendering: function(){
+          this.getView().getModel("excelData").setProperty("/isDropdownEnabled",false);    
         },
         onSaveChanges: function () {
           const that = this;
@@ -44,10 +52,10 @@ sap.ui.define([
 
             }
             
-            console.log("Response Datadsdsdsdsdsdsds" + JSON.stringify(matPost));
+            
 
             const savePayload = {
-              "uName": "uppena",
+              "uName": "uppena123",
               "Industry": "Dairy",
               "material":matPost
             }
@@ -150,7 +158,6 @@ sap.ui.define([
                 // })
                 .then((oData) => {
                   // Arrow function preserves 'this'
-                  console.log("Data received:", oData);
                   var aTableData = oData.fetchAPI.result;
                   aTableData.forEach(row => {
                     const match = row.top_activity_ids.find(item => item.result_id === row.active_result_id);
@@ -174,6 +181,51 @@ sap.ui.define([
      // this._chkFile().then(function () {
         //return that._uploadFileExecute();
      // });
+    },
+    onEditPress: function(oEvent){
+      var that = this;
+      // const oContext = oEvent.getSource().getBindingContext();
+      // const oModel = oContext.getModel();
+      // const sPath = oContext.getPath();
+  
+      // Update the model to enable the dropdown for this row
+      //oModel.setProperty(sPath + "/isDropdownEnabled", true);
+      const editPost = [];
+      const oModel = this.getView().getModel("excelData");
+      const aData = oModel.getData().results;
+
+      for(let j=0;j<aData.length;j++){
+        editPost.push({
+          "row_id":aData[j].row_id,
+          "active_result_id": aData[j].active_result_id,
+          "Total_Emission":aData[j]['Total Emission']
+
+        })
+
+      }
+
+      const editPayloadSave = {
+        "editPayload":editPost
+      }
+
+      this.oGlobalBusyDialog.open();     
+      var oModel1 = this.getOwnerComponent().getModel();
+     
+    odataHelper.postData(oModel1, "/editData", editPayloadSave)
+         .then((oData) => {
+          
+            // if(oData.saveData.result == "Material details stored successfully."){
+            //   that.onRunExecute();
+            // }
+               that.onRunExecute();
+        })
+        .catch((oError) => {
+              // Handle the error
+              console.error("Error reading data:", oError);
+              this.oGlobalBusyDialog.close();
+              // Display an error message, etc.
+          });
+
     },
     _getFileUploader: function () {
       return this.getView().byId("fileUploaderDialog");
@@ -342,7 +394,6 @@ sap.ui.define([
               oModel.setData({ results: jsonData });
               // this.getView().setModel(oModel, "excelData");
   
-              console.log("Parsed Excel Data:", jsonData);
           }.bind(this);
           reader.readAsBinaryString(file);
       }
@@ -450,6 +501,7 @@ sap.ui.define([
 // },
 
 onUploadFile: function () {
+  this.getView().getModel("excelData").setProperty("isDropdownEnabled",false);    
 if (!this._selectedFile) {
     sap.m.MessageToast.show("Please select a file first.");
     return;
@@ -501,9 +553,13 @@ reader.onload = function (e) {
     if (that._oUploadDialog) {
         that._oUploadDialog.close();
     }
+
+   
 };
 
 reader.readAsBinaryString(this._selectedFile);
+
+
 },
 
 

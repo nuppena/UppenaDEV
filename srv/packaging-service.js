@@ -14,12 +14,12 @@ module.exports = async (srv) => {
    const api_def = cds.env.requires[apiURL];
    
    api_def.credentials.url = xsuaa_bind.credentials.url;
-console.log("URL OF XUAA" +api_def.credentials.url);
+
    // connect to the XSUAA host
    const xsuaa = await cds.connect.to(api_def);
     srv.on('uploadFile', async (request) => {
         try {
-         console.log("I am in File upload");
+         
           const updFileData = validation.base64ToJSON(request.data.payload[0].data);
           payloadsample=
           {
@@ -32,7 +32,7 @@ console.log("URL OF XUAA" +api_def.credentials.url);
         
          }
          
-          console.log(updFileData);
+          
           
          
         } catch (error) {
@@ -60,7 +60,7 @@ console.log("User Info" + user);
 
   srv.on('runAPI',async(request) =>{
     const yourData= {
-      "User Name": "uppena"
+      "User Name": "uppena123"
       };
    const awsConnect= await cds.connect.to("AWSAPI");
    return await awsConnect.tx(request).post("/api/run",yourData)
@@ -69,16 +69,40 @@ console.log("User Info" + user);
 
   srv.on('fetchAPI',async(request) =>{
     const yourData= {
-       "User Name": "uppena"
+       "User Name": "uppena123"
        };
     const awsConnect= await cds.connect.to("AWSAPI");
     return await awsConnect.tx(request).post("/api/fetch",yourData)
    });
+
+   srv.on('editData',async(request) =>{
+    const eArray=[];
+    const pcfEditpay = request.data.editPayload;
+
+    for(let i=0;i<pcfEditpay.length;i++)
+      {
+        eArray.push( {
+          "row_id": pcfEditpay[i].row_id,
+          "active_result_id": pcfEditpay[i].active_result_id,
+          "Total Emission": pcfEditpay[i].Total_Emission
+      })
+      }
+
+
+      const editPayload1 = {
+        "edit_request":eArray
+              }
+
+     //console.log("Payload" +JSON.stringify(savePayload));
+    const awsConnect= await cds.connect.to("AWSAPI");
+     return await awsConnect.tx(request).post("/api/edit",editPayload1)
+  
+   });
+
    srv.on('saveData',async(request) =>{
 
     const pcfMaterials = request.data.material;
-   
-
+  
     const mArray=[];
 
     for(let i=0;i<pcfMaterials.length;i++)
@@ -102,10 +126,7 @@ console.log("User Info" + user);
      "Material Details":mArray
     }
     
-    console.log("Payload123456" +JSON.stringify(savePayload));
-
-
-    //console.log("Payload" +JSON.stringify(savePayload));
+      //console.log("Payload" +JSON.stringify(savePayload));
     const awsConnect= await cds.connect.to("AWSAPI");
 
     return await awsConnect.tx(request).post("/api/save",savePayload)
