@@ -9,7 +9,7 @@ sap.ui.define([
     return Controller.extend("pcf.com.acc.packaging.controller.Packaging", {
         onInit() {
           var excelModel = new sap.ui.model.json.JSONModel();
-          this.getView().setModel(excelModel, "excelData");   
+          this.getView().setModel(excelModel, "excelData");  
           this.PackagingState = this.getOwnerComponent().getState("Packaging");
           this.PackagingService = this.getOwnerComponent().getService("Packaging");  
           this.oGlobalBusyDialog = new sap.m.BusyDialog(); 
@@ -33,7 +33,7 @@ sap.ui.define([
               matPost.push({
             "Site_ID": aData[i]['Site ID'],
             "Country_Name": aData[i]['Country Name'],     
-            "Material_ID":aData[i]['Material ID'],
+            "Material_ID":String(aData[i]['Material ID']),
             "Material_Name": aData[i]['Material Name'],
             "Short_Description": aData[i]['Short Description'],
             "Weight":aData[i]['Weight'],
@@ -44,10 +44,10 @@ sap.ui.define([
 
             }
             
-            console.log("Response Datadsdsdsdsdsdsds" + JSON.stringify(matPost));
+            
 
             const savePayload = {
-              "uName": "uppena.nagaraju",
+              "uName": "test1234",
               "Industry": "Dairy",
               "material":matPost
             }
@@ -60,6 +60,11 @@ sap.ui.define([
                 
                   if(oData.saveData.result == "Material details stored successfully."){
                     that.onRunExecute();
+                  }
+                  if(oData.saveData.statusCode == 502){
+                    let errMessag = oData.saveData.reason.response.body.error;
+                    MessageBox.error(errMessag.split(":")[1]+":"+errMessag.split(":")[2]);
+                    this.oGlobalBusyDialog.close();
                   }
                  
               })
@@ -82,21 +87,67 @@ sap.ui.define([
 
             //MessageBox.success("Changes saved successfully!");
         },
-        getUserInfo: function(){
-          var oModel1 = this.getOwnerComponent().getModel();
-           
-          odataHelper.getData(oModel1, "/userInfoUAA")
-               .then((oData) => {
 
-               console.log("Odata UserInf" + oData);
-               
-              })
-              .catch((oError) => {
-                    // Handle the error
-                    console.error("Error reading data:", oError);
-                    
-                    // Display an error message, etc.
-                });
+        onEditChanges: function(){
+          var that=this;
+          const editPost = [];
+          const oModel = this.getView().getModel("excelData");
+          const aData = oModel.getData().results;
+    
+          for(let j=0;j<aData.length;j++){
+            editPost.push({
+              "row_id":aData[j].row_id,
+              "active_result_id": aData[j].active_result_id,
+              "Total_Emission":aData[j]['Total Emission']
+    
+            })
+    
+          }
+    
+          const editPayloadSave = {
+            "editPayload":editPost
+          }
+    
+          this.oGlobalBusyDialog.open();     
+          var oModel1 = this.getOwnerComponent().getModel();
+         
+        odataHelper.postData(oModel1, "/editData", editPayloadSave)
+             .then((oData) => {
+              
+                // if(oData.saveData.result == "Material details stored successfully."){
+                //   that.onRunExecute();
+                // }
+                   that.onRunExecute();
+            })
+            .catch((oError) => {
+                  // Handle the error
+                  console.error("Error reading data:", oError);
+                  this.oGlobalBusyDialog.close();
+                  // Display an error message, etc.
+              });
+
+        },
+        getUserInfo: function(){
+          // var oModel1 = this.getOwnerComponent().getModel();
+          // odataHelper.getData(oModel1, "/userInfoUAA")
+          //      .then((oData) => {
+          //      console.log("Odata UserInf" + oData);
+          //     })
+          //     .catch((oError) => { 
+          //           console.error("Error reading data:", oError);
+          //       });
+
+          $.ajax({
+            method: "GET",
+            url: "/user-api/currentUser",
+            async: true,
+            success: function(data) {
+              console.log(JSON.stringify(data))
+            },
+            error: function(err) {
+              console.log(err)
+            }
+          });
 
         },
           onRunExecute: function(){
@@ -150,7 +201,6 @@ sap.ui.define([
                 // })
                 .then((oData) => {
                   // Arrow function preserves 'this'
-                  console.log("Data received:", oData);
                   var aTableData = oData.fetchAPI.result;
                   aTableData.forEach(row => {
                     const match = row.top_activity_ids.find(item => item.result_id === row.active_result_id);
@@ -163,6 +213,7 @@ sap.ui.define([
                   //this.getView().byId("table").setModel(new sap.ui.model.json.JSONModel(oData));
                  // this.getView().byId("smartTable").rebindTable();
                   this.getView().getModel().refresh(true);
+                  that.getOwnerComponent().getModel("locModel").setProperty("/btEditEnabled",true);
                   this.oGlobalBusyDialog.close();
               })
               .catch((oError) => {
@@ -174,6 +225,31 @@ sap.ui.define([
      // this._chkFile().then(function () {
         //return that._uploadFileExecute();
      // });
+    },
+    onEditPress: function(oEvent){
+      var that = this;
+      this.getView().byId("btSave").setVisible(true);
+      this.getView().byId("btRun").setVisible(false);
+
+      var oButton = oEvent.getSource().getParent();
+      var aCells = oButton.getCells();
+      var oVBox = aCells[9]; 
+      var oInput = aCells[10];  
+      var oSelect = oVBox.getItems()[0];
+      
+      if (oSelect && oInput) {
+        oInput.setEditable(oInput.getEditable() === false);
+        oSelect.setEditable(oSelect.getEditable() === false);
+      }
+      
+       const oContext = oEvent.getSource().getBindingContext();
+       const oModel = oContext.getModel();
+      const sPath = oContext.getPath();
+  
+      // Update the model to enable the dropdown for this row
+      oModel.setProperty(sPath + "/isDropdownEnabled", true);
+     
+
     },
     _getFileUploader: function () {
       return this.getView().byId("fileUploaderDialog");
@@ -342,7 +418,6 @@ sap.ui.define([
               oModel.setData({ results: jsonData });
               // this.getView().setModel(oModel, "excelData");
   
-              console.log("Parsed Excel Data:", jsonData);
           }.bind(this);
           reader.readAsBinaryString(file);
       }
@@ -450,6 +525,7 @@ sap.ui.define([
 // },
 
 onUploadFile: function () {
+  this.getView().getModel("excelData").setProperty("isDropdownEnabled",false);    
 if (!this._selectedFile) {
     sap.m.MessageToast.show("Please select a file first.");
     return;
@@ -497,13 +573,19 @@ reader.onload = function (e) {
     that.getView().setModel(oModel, "excelData");
 
     MessageBox.success("File uploaded and validated successfully.");
-
+   // that.getView().getModel("excelData").setProperty("/btEditEnabled",false); 
+    that.getOwnerComponent().getModel("locModel").setProperty("/btEditEnabled",false);
+    
     if (that._oUploadDialog) {
         that._oUploadDialog.close();
     }
+
+   
 };
 
 reader.readAsBinaryString(this._selectedFile);
+
+
 },
 
 

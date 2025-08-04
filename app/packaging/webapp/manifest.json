@@ -5,7 +5,7 @@
     "type": "application",
     "i18n": "i18n/i18n.properties",
     "applicationVersion": {
-      "version": "0.0.1"
+      "version": "0.0.4"
     },
     "title": "{{appTitle}}",
     "description": "{{appDescription}}",
@@ -23,13 +23,17 @@
           "annotations": [],
           "odataVersion": "2.0"
         }
-      }
+      },
+      "locDataSource": {
+				"uri": "model/localModel.json",
+				"type": "JSON"
+		}
     },
     "crossNavigation": {
       "inbounds": {
         "zbupackaging-create": {
           "semanticObject": "zbupackaging",
-          "action": "create",
+          "action": "display",
           "title": "{{zbupackaging-create.flpTitle}}",
           "signature": {
             "parameters": {},
@@ -58,7 +62,7 @@
   "sap.ui5": {
     "flexEnabled": false,
     "dependencies": {
-      "minUI5Version": "1.135.0",
+      "minUI5Version": "1.138.0",
       "libs": {
         "sap.m": {},
         "sap.ui.core": {}
@@ -85,7 +89,11 @@
           "earlyRequests": true,
           "useBatch": false
         }
-      }
+      },
+      "locModel": {
+      "type": "sap.ui.model.json.JSONModel",
+      "dataSource": "locDataSource"
+    }
     },
     "resources": {
       "css": [
@@ -128,5 +136,9 @@
       "id": "App",
       "async": true
     }
+  },
+  "sap.cloud": {
+    "public": true,
+    "service": "zbuPackagingrouter"
   }
 }

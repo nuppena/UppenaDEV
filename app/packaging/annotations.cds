@@ -1,1 +1,1 @@
-using CatalogService as service from '../../srv/cat-service';
+using PackagingEFCalculation as service from '../../srv/packaging-service';

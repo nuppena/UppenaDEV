@@ -19,7 +19,7 @@ service PackagingEFCalculation {
  type savePay:{
     Site_ID : String;
     Country_Name: String;
-    Material_ID:Integer;
+    Material_ID:String;
     Material_Name: String;
     Short_Description:String;
     Weight:Decimal;

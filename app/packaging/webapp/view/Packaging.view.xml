@@ -10,8 +10,8 @@
   <Panel >
                     <VBox class="sapUiSmallMargin">
                    <HBox justifyContent="End" alignItems="Center" class="sapUiSmallMarginBottom">
-                            <Button text="Run"  type="Emphasized" press="onSaveChanges" class="sapUiTinyMarginEnd"/>
-                            <!-- <Button text="Save" type="Emphasized" press="onSaveChanges" /> -->
+                            <Button id ="btRun" text="Run"  type="Emphasized" press="onSaveChanges" class="sapUiTinyMarginEnd"/>
+                            <Button id="btSave" text="Run" type="Emphasized" press="onEditChanges" visible="false"/>
      
                         </HBox>
                     </VBox>
@@ -114,7 +114,7 @@
 
               <Column id="Weight" width="80px" hAlign="Begin">
                 <customData>
-                  <core:CustomData key="p13nData" value='{"columnKey":"Weight","leadingProperty":"Weight","columnIndex":5,"filterProperty":"Weight","sortProperty":"Weight","type":"numeric"}'/>
+                  <core:CustomData key="p13nData" value='{"columnKey":"Weight","leadingProperty":"Weight","columnIndex":5,"filterProperty":"Weight","sortProperty":"Weight"}'/>
                 </customData>
                 <Text text="Weight"/>
               </Column>
@@ -187,17 +187,16 @@
        <Select width="100%" enabled="{excelData>isDropdownEnabled}"
   selectedKey="{excelData>active_result_id}"
   change=".onMappedActivityChange"
-  items="{excelData>top_activity_ids}" tooltip="{excelData>mapped_activity_id}"
->
+  items="{excelData>top_activity_ids}" tooltip="{excelData>mapped_activity_id}"  editable="false">
   <core:ListItem
     key="{excelData>result_id}"
     text="{excelData>activity_id}"
   />
 </Select>
  </VBox>
-        <Text text="{excelData>Total Emission}" />
+        <Input value="{excelData>Total Emission}" editable="false"/>
        
-        <Button icon="sap-icon://edit" tooltip="Edit" press="onEditPress" />
+        <Button icon="sap-icon://edit" tooltip="Edit" press="onEditPress" enabled="{locModel>/btEditEnabled}" />
         <Text text="{excelData>error_status}" />
 
 					</cells>

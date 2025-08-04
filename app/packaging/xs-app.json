@@ -3,11 +3,16 @@
   "authenticationMethod": "route",
   "routes": [
     {
-    "source": "^/sap/(.*)$",
-      "target": "/sap/$1",
-      "destination": "AWS_PCF_BACKEND_API",
-      "authenticationType": "none",
-      "csrfProtection": false
+      "source": "^/odata/(.*)$",
+      "target": "/odata/$1",
+      "authenticationType": "xsuaa",
+      "destination": "zbuPackaging-srv",
+       "csrfProtection": true
+    },
+    {
+      "source": "^/user-api(.*)",
+      "target": "$1",
+      "service": "sap-approuter-userapi"
     },
     {
       "source": "^/resources/(.*)$",
@@ -20,13 +25,6 @@
       "target": "/test-resources/$1",
       "authenticationType": "none",
       "destination": "ui5"
-    },
-    {
-      "source": "^/srv-api/(.*)$", 
-      "target": "$1",
-      "authenticationType": "xsuaa",
-      "destination": "zbuPackaging-srv",
-       "csrfProtection": true
     },
     {
       "source": "^(.*)$",

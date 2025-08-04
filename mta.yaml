@@ -8,7 +8,6 @@ modules:
   path: gen/srv
   requires:
   - name: zbuPackaging-auth
-  - name: zbuPackaging-connectivity
   - name: zbuPackaging-destination
   provides:
   - name: srv-api
@@ -19,42 +18,50 @@ modules:
     instances: 1
   build-parameters:
     builder: npm-ci
-- name: zbuPackaging
-  type: approuter.nodejs
-  path: app/router
-  requires:
-  - name: srv-api
-    group: destinations
-    properties:
-      forwardAuthToken: true
-      name: srv-api
-      url: ~{srv-url}
-  - name: zbuPackaging-auth
-  - name: zbuPackaging-destination
-  - name: zbuPackaging-html5-runtime
-  provides:
-  - name: app-api
-    properties:
-      app-protocol: ${protocol}
-      app-uri: ${default-uri}
-  parameters:
-    disk-quota: 256M
-    keep-existing-routes: true
-    memory: 256M
-- name: zbuPackaging-app-deployer
+- name: zbuPackaging-app-content
   type: com.sap.application.content
-  path: gen
+  path: .
   requires:
   - name: zbuPackaging-html5-repo-host
     parameters:
       content-target: true
   build-parameters:
-    build-result: app/
+    build-result: resources
     requires:
     - artifacts:
       - pcfcomaccpackaging.zip
       name: pcfcomaccpackaging
-      target-path: app/
+      target-path: resources/
+- name: zbuPackaging-destination-content
+  type: com.sap.application.content
+  requires:
+  - name: zbuPackaging-destination
+    parameters:
+      content-target: true
+  - name: zbuPackaging-html5-repo-host
+    parameters:
+      service-key:
+        name: zbuPackaging_html_repo_host-key
+  - name: zbuPackaging-auth
+    parameters:
+      service-key:
+        name: zbuPackaging_auth_key
+  parameters:
+    content:
+      instance:
+        destinations:
+        - Name: zbuPackaging_router_zpcf_app_html_repo_host
+          ServiceInstanceName: zbuPackaging-html5-app-host-service
+          ServiceKeyName: zbuPackaging_html_repo_host-key
+          sap.cloud.service: zbuPackagingrouter
+        - Authentication: OAuth2UserTokenExchange
+          Name: zbuPackaging_router_zbuPackagingapp
+          ServiceInstanceName: zbuPackaging-xsuaa-service
+          ServiceKeyName: zbuPackaging_auth_key
+          sap.cloud.service: zbuPackagingrouter
+        existing_destinations_policy: ignore
+  build-parameters:
+    no-source: true
 - name: pcfcomaccpackaging
   type: html5
   path: app/packaging
@@ -69,21 +76,12 @@ resources:
 - name: zbuPackaging-auth
   type: org.cloudfoundry.managed-service
   parameters:
-    config:
-      tenant-mode: dedicated
-      xsappname: zbuPackaging
     path: ./xs-security.json
     service: xsuaa
+    service-name: zbuPackaging-xsuaa-service
     service-plan: application
-- name: zbuPackaging-connectivity
-  type: org.cloudfoundry.managed-service
-  parameters:
-    service: connectivity
-    service-plan: lite
 - name: zbuPackaging-destination
   type: org.cloudfoundry.managed-service
-  requires:
-    - name: srv-api
   parameters:
     config:
       HTML5Runtime_enabled: true
@@ -105,17 +103,16 @@ resources:
             URL: ~{srv-api/srv-url}   
           existing_destinations_policy: update
     service: destination
+    service-name: zbuPackaging-destination
     service-plan: lite
+  requires:
+  - name: srv-api
 - name: zbuPackaging-html5-repo-host
   type: org.cloudfoundry.managed-service
   parameters:
     service: html5-apps-repo
+    service-name: zbuPackaging-html5-app-host-service
     service-plan: app-host
-- name: zbuPackaging-html5-runtime
-  type: org.cloudfoundry.managed-service
-  parameters:
-    service: html5-apps-repo
-    service-plan: app-runtime
 parameters:
   deploy_mode: html5-repo
   enable-parallel-deployments: true

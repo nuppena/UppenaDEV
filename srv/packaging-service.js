@@ -55,12 +55,12 @@ console.log("User Info" + user);
     });
     // using the XSUAA API
     srv.on('userInfoUAA', async () => {
-      return await xsuaa.get("/userInfo");
+      return await xsuaa.get("/userinfo");
   });
 
   srv.on('runAPI',async(request) =>{
     const yourData= {
-      "User Name": "uppena123"
+      "User Name": "test1234"
       };
    const awsConnect= await cds.connect.to("AWSAPI");
    return await awsConnect.tx(request).post("/api/run",yourData)
@@ -69,7 +69,7 @@ console.log("User Info" + user);
 
   srv.on('fetchAPI',async(request) =>{
     const yourData= {
-       "User Name": "uppena123"
+       "User Name": "test1234"
        };
     const awsConnect= await cds.connect.to("AWSAPI");
     return await awsConnect.tx(request).post("/api/fetch",yourData)
@@ -102,7 +102,7 @@ console.log("User Info" + user);
    srv.on('saveData',async(request) =>{
 
     const pcfMaterials = request.data.material;
-  
+  console.log("Use Infor in SAVE" + request.user.id);
     const mArray=[];
 
     for(let i=0;i<pcfMaterials.length;i++)
@@ -128,7 +128,13 @@ console.log("User Info" + user);
     
       //console.log("Payload" +JSON.stringify(savePayload));
     const awsConnect= await cds.connect.to("AWSAPI");
-
+try{
     return await awsConnect.tx(request).post("/api/save",savePayload)
+}
+catch(err) {
+  console.log("err------------>", err)
+  return err;
+  //return res.status(500).send({ret_code: ReturnCodes.SOMETHING_WENT_WRONG});
+} 
       });
 };
