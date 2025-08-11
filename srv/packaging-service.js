@@ -23,7 +23,7 @@ module.exports = async (srv) => {
           const updFileData = validation.base64ToJSON(request.data.payload[0].data);
           payloadsample=
           {
-              "UserName" : "test",
+              "UserName" : "u1234",
               "Industry" : "Dairy",
               "Material Details":  MaterialDetails              
           };
@@ -60,7 +60,7 @@ console.log("User Info" + user);
 
   srv.on('runAPI',async(request) =>{
     const yourData= {
-      "User Name": "test1234"
+      "User Name": "u1234"
       };
    const awsConnect= await cds.connect.to("AWSAPI");
    return await awsConnect.tx(request).post("/api/run",yourData)
@@ -69,7 +69,7 @@ console.log("User Info" + user);
 
   srv.on('fetchAPI',async(request) =>{
     const yourData= {
-       "User Name": "test1234"
+       "User Name": "u1234"
        };
     const awsConnect= await cds.connect.to("AWSAPI");
     return await awsConnect.tx(request).post("/api/fetch",yourData)

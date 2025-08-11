@@ -2,15 +2,16 @@
   xmlns:mvc="sap.ui.core.mvc"
   xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
   xmlns:smartTable="sap.ui.comp.smarttable"
+  xmlns:table="sap.ui.table"
   xmlns:core="sap.ui.core" xmlns:u="sap.ui.unified"  xmlns:f="sap.f"
   xmlns="sap.m" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
   controllerName="pcf.com.acc.packaging.controller.Packaging">
   <Page id="page1" showHeader="true"  title="Emission Factor Mapping" titleAlignment="Center">
    <content>
-  <Panel >
+  <!-- <Panel >
                     <VBox class="sapUiSmallMargin">
                    <HBox justifyContent="End" alignItems="Center" class="sapUiSmallMarginBottom">
-                            <Button id ="btRun" text="Run"  type="Emphasized" press="onSaveChanges" class="sapUiTinyMarginEnd"/>
+                            <Button id ="btRun" text="Run"  type="Emphasized" press="onExecute" class="sapUiTinyMarginEnd"/>
                             <Button id="btSave" text="Run" type="Emphasized" press="onEditChanges" visible="false"/>
      
                         </HBox>
@@ -21,13 +22,13 @@
                             <Button text="Download Template" type="Transparent" press="onDownloadTemplate" class="sapUiTinyMarginEnd"/>
                             <Button text="Import" type="Transparent" press="onOpenUploadDialog" class="sapUiTinyMarginEnd"/>
                              <Button text="Export" type="Transparent" press="onExport" class="sapUiTinyMarginEnd"/>
-                             <!--<Button text="Run"  type="Emphasized" press="onExecute"/>-->
+                            
      
                         </HBox>
                     </VBox>
-  </Panel>
+  </Panel> -->
        
-          <Panel >
+          <!-- <Panel >
 <smartFilterBar:SmartFilterBar
       id="smartFilterBar"
       entitySet="saveData"
@@ -61,21 +62,6 @@
                 </Toolbar>
             </smartTable:customToolbar>
             <Table id="table" items ="{excelData>/results}" enableBusyIndicator="true">
-          <!-- <columns>
-          <Column><Text text="Site ID" wrapping="true"/></Column>
-          <Column><Text text="Country Name" /></Column>
-          <Column><Text text="Material ID" /></Column>
-          <Column><Text text="Material Name" /></Column>
-          <Column><Text text="Short Description" /></Column>
-          <Column><Text text="Weight" wrapping="true" /></Column>
-          <Column><Text text= "Weight Unit" /></Column>
-          <Column><Text text= "Spend(Millions)" /></Column>
-          <Column><Text text= "Spend Currency Unit" /></Column>
-          <Column><Text text= "Mapped Activity ID" /></Column>
-          <Column><Text text="Total Emissions (kgCO₂e)" /></Column>
-          <Column><Text text="Edit" /></Column>
-          <Column><Text text="Error Status" /></Column>
-        </columns> -->
       <columns>
               <Column id="Kunnr" hAlign="Begin" width="100px"  >
                 <customData>
@@ -196,7 +182,7 @@
  </VBox>
         <Input value="{excelData>Total Emission}" editable="false"/>
        
-        <Button icon="sap-icon://edit" tooltip="Edit" press="onEditPress" enabled="{locModel>/btEditEnabled}" />
+        <Button icon="sap-icon://edit" tooltip="Edit" press="onEditPress" enabled="true" />
         <Text text="{excelData>error_status}" />
 
 					</cells>
@@ -205,6 +191,251 @@
 		</Table>
       
     </smartTable:SmartTable>
+</Panel> -->
+<Panel>
+ <table:Table
+                    id="table"
+                    rows="{excelData>/results}"
+                    selectionMode="None"
+                    enableBusyIndicator="true"
+                    enableCellFilter="true"
+                    enableColumnReordering="true"
+                    columnHeaderVisible="true"
+                    width="100%"
+                >
+                    <table:extension>
+                    <OverflowToolbar style="Clear">
+                    <ToolbarSpacer/>
+                    <SearchField
+						placeholder="Filter"
+						value="{ui>/filterValue}"
+						search="handleTxtFilter"
+						width="15rem"/>
+                           
+                        <Button
+                            text="Download Template"
+                            type="Transparent"
+                            press="onDownloadTemplate"
+                            class="sapUiTinyMarginEnd"
+                        />
+                        <Button
+                            text="Import"
+                            type="Transparent"
+                            press="onOpenUploadDialog"
+                            class="sapUiTinyMarginEnd"
+                        />
+                        <Button
+                            text="Export"
+                            type="Transparent"
+                            press="onExport"
+                            class="sapUiTinyMarginEnd"
+                        />
+                         <Button
+                            id="btRun"
+                            text="Run"
+                            type="Emphasized"
+                            press="onSaveChanges"
+                            class="sapUiTinyMarginEnd"
+                        />
+                        <Button
+                            id="btSave"
+                            text="Run"
+                            type="Emphasized"
+                            press="onEditChanges"
+                            visible="false"
+                        />
+
+                    </OverflowToolbar>
+                    </table:extension>
+
+               
+                  	<table:columns>		
+                        <table:Column
+                            label="SiteID"
+                            sortProperty="Site ID"
+                            filterProperty="Site ID"
+                            width="60px"
+                        >
+                            <table:template>
+                                <Text text="{excelData>Site ID}" />
+                            </table:template>
+                        </table:Column>
+
+                  
+                        <table:Column
+                            label="CountryName"
+                            filterProperty="Country Name"
+                            width="110px"
+                        >
+                            <table:template>
+                                <Text text="{excelData>Country Name}" 
+                                wrapping="false"/>
+                            </table:template>
+                        </table:Column>
+
+                  
+                        <table:Column
+                            label="MaterialID"
+                            sortProperty="Material ID"
+                            filterProperty="Material ID"
+                            width="100px"
+                            filterType="sap.ui.model.type.Integer"
+                        >
+                            <table:template>
+                                <Text text="{
+                                path: 'excelData>Material ID',
+                                type: 'sap.ui.model.type.Integer'
+                                }" />
+                            </table:template>
+                        </table:Column>
+
+                  
+                        <table:Column
+                            label="MaterialName"
+                            filterProperty="Material Name"
+                            width="200px"
+                        >
+                            <table:template>
+                                <Text text="{excelData>Material Name}"
+                                wrapping="false" />
+                            </table:template>
+                        </table:Column>
+
+                  
+                        <table:Column
+                            label="ShortDescription"
+                            filterProperty="Short Description"
+                            width="130px"
+                        >
+                            <table:template>
+                                <Text text="{excelData>Short Description}" 
+                                wrapping="false"/>
+                            </table:template>
+                        </table:Column>
+                        <table:Column
+                            label="Weight"
+                            sortProperty="Weight"
+                            filterProperty="Weight"
+                            width="80px"
+                            filterType="sap.ui.model.type.Float">
+                                <table:template>
+                                    <Text text="{ 
+                                    path: 'excelData>Weight', 
+                                    type: 'sap.ui.model.type.Float' 
+                                    }" />
+                                </table:template>
+
+                        </table:Column>
+
+                  
+                        <table:Column
+                            label="WeightUnit"
+                            filterProperty="Weight Unit"
+                            width="100px"
+                        >
+                            <table:template>
+                                <Text text="{excelData>Weight Unit}" 
+                                wrapping="false"/>
+                            </table:template>
+                        </table:Column>
+
+                  
+                        <table:Column
+                            label="Spend(in Millions)"
+                            sortProperty="Spend (in Millions)"
+                            filterProperty="Spend (in Millions)"
+                            width="130px"
+                            filterType="sap.ui.model.type.Float"
+                        >
+                            <table:template>
+                                <Text text="{ 
+                                    path: 'excelData>Spend (in Millions)', 
+                                    type: 'sap.ui.model.type.Float' 
+                                }" />
+                            </table:template>
+                        </table:Column>
+
+                  
+                        <table:Column
+                            label="SpendCurrencyUnit"
+                            sortProperty="Spend Currency Unit"
+                            filterProperty="Spend Currency Unit"
+                            width="150px"
+                        >
+                            <table:template>
+                                <Text text="{excelData>Spend Currency Unit}" />
+                            </table:template>
+                        </table:Column>
+
+                  
+                        <table:Column
+                            label="MappedActivityID"
+                            sortProperty="MappedActivityID"
+                            filterProperty="MappedActivityID"
+                            width="200px"
+                        >
+                            <table:template>
+                                <VBox>
+                                    <Select
+                                        width="100%"
+                                        enabled="{excelData>isDropdownEnabled}"
+                                        selectedKey="{excelData>active_result_id}"
+                                        change=".onMappedActivityChange"
+                                        items="{excelData>top_activity_ids}"
+                                        tooltip="{excelData>mapped_activity_id}"
+                                        editable="false"
+                                    >
+                                        <core:ListItem
+                                        key="{excelData>result_id}"
+                                        text="{excelData>activity_id}"
+                                        />
+                                    </Select>
+                                </VBox>
+                            </table:template>
+                        </table:Column>
+
+                  
+                        <table:Column
+                            label="TotalEmissions(kgCO₂e)"
+                            sortProperty="TotalEmission"
+                            filterProperty="TotalEmission"
+                            width="100px"
+                        >
+                            <table:template>
+                                <Input
+                                    value="{excelData>Total Emission}"
+                                    editable="{=${excelData>btEditEnabled} === 'Active'}"
+                                />
+                            </table:template>
+                        </table:Column>
+
+                  
+                        <table:Column
+                            label="Edit"
+                            width="70px"
+                        >
+                            <table:template>
+                                <Button
+                                    icon="sap-icon://edit"
+                                    tooltip="Edit"
+                                    press="onEditPress"
+                                    enabled="{locModel>/btEditCEnabled}"
+                                />
+                            </table:template>
+                        </table:Column>
+
+                        <table:Column
+                            label="ErrorStatus"
+                            sortProperty="ErrorStatus"
+                            filterProperty="ErrorStatus"
+                            width="200px"
+                         >
+                            <table:template>
+                                <Text text="{excelData>error_status}" />
+                            </table:template>
+                        </table:Column>
+                    </table:columns>	
+                </table:Table>
 </Panel>
         </content>
           

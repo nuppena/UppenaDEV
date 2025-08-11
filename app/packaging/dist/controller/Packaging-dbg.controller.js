@@ -2,7 +2,7 @@ sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/ui/core/BusyIndicator",
     "sap/m/MessageBox",
-    "pcf/com/acc/packaging/service/odataHelper"
+    "pcf/com/acc/packaging/service/odataHelper",
 ], (Controller,BusyIndicator,MessageBox,odataHelper) => {
     "use strict";
 
@@ -11,7 +11,9 @@ sap.ui.define([
           var excelModel = new sap.ui.model.json.JSONModel();
           this.getView().setModel(excelModel, "excelData");  
           this.PackagingState = this.getOwnerComponent().getState("Packaging");
-          this.PackagingService = this.getOwnerComponent().getService("Packaging");  
+          this.PackagingService = this.getOwnerComponent().getService("Packaging");
+          
+         this.getView().getModel("excelData").setProperty("/btEditEnabled", "InActive");
           this.oGlobalBusyDialog = new sap.m.BusyDialog(); 
           this.getUserInfo();
         },
@@ -28,7 +30,21 @@ sap.ui.define([
 
            
             const matPost = [];
+            var pWeight;
+            var pSpend;
             for(let i=0;i<aData.length;i++){
+
+              if(aData[i]['Weight'].length == 0){
+                pWeight = null;
+              }else{
+                pWeight = aData[i]['Weight']
+              }
+
+              if(aData[i]['Spend (in Millions)'].toString().length == 0){
+                pSpend = null;
+              }else{
+                pSpend = aData[i]['Spend (in Millions)']
+              }
             
               matPost.push({
             "Site_ID": aData[i]['Site ID'],
@@ -36,21 +52,19 @@ sap.ui.define([
             "Material_ID":String(aData[i]['Material ID']),
             "Material_Name": aData[i]['Material Name'],
             "Short_Description": aData[i]['Short Description'],
-            "Weight":aData[i]['Weight'],
+            "Weight":pWeight,
             "Weight_Unit":aData[i]['Weight Unit'],
-            "Spend":aData[i]['Spend (in Millions)'],
+            "Spend":pSpend,
             "Spend_Currency_Unit":aData[i]['Spend Currency Unit']
               });
-
             }
             
-            
-
             const savePayload = {
-              "uName": "test1234",
+              "uName": "u1234",
               "Industry": "Dairy",
               "material":matPost
             }
+            
 
             this.oGlobalBusyDialog.open();     
       var oModel1 = this.getOwnerComponent().getModel();
@@ -172,6 +186,50 @@ sap.ui.define([
                 });
 
           },
+          loadXLSXLibrary: function () {
+            return new Promise(function (resolve, reject) {
+                if (window.XLSX) {
+                    resolve();
+                    return;
+                }
+         
+                var script = document.createElement("script");
+                script.src = jQuery.sap.getModulePath("pcf.com.acc.packaging.lib", "/xlsx.full.min.js");
+                script.onload = function () {
+                    resolve();
+                };
+                script.onerror = function () {
+                    reject("Failed to load XLSX library");
+                };
+         
+                document.head.appendChild(script);
+            });
+        },        
+        onMappedActivityChange:function(oEvent){
+
+
+          var oSelectedItem = oEvent.getParameter("selectedItem");
+        var sSelectedKey = oSelectedItem.getKey();
+
+        let oModel = this.getView().getModel("excelData").getProperty("/results");
+      //   const oContext = oEvent.getSource().getBindingContext();
+      //  const oModel2 = oContext.getModel();
+      // const sPath = oContext.getPath();
+
+      const excelModel = oEvent.getSource().getBindingContext('excelData');
+
+        let oFilterObj = excelModel.getProperty("top_activity_ids").filter(
+          oObject => oObject.result_id === sSelectedKey);
+
+          excelModel.setProperty("Total Emission", oFilterObj[0].total_emission);
+
+          if(oFilterObj[0].activity_id == "custom"){
+            excelModel.setProperty(excelModel.getPath() +"/btEditEnabled", "Active");
+            //this.getOwnerComponent().getModel("locModel").setProperty("/btEditEnabled",true);
+          }else{
+            excelModel.setProperty(excelModel.getPath() +"/btEditEnabled", "InActive");
+          }
+        },
         onDownloadTemplate: function(){
           var fileName = "PackagingTemplate.xlsx";
           //  var sURL = sap.ui.require.toUrl(`zbue0004_massresui/DownloadTemplate/${fileName}`);
@@ -190,17 +248,22 @@ sap.ui.define([
 */
     onExecute: function () {
       const that = this;
+      // var aTableData = this.getOwnerComponent().getModel("locModel").getProperty("/d/fetchAPI/result/");
+      // this.getView().setModel(oModel1, "excelData");
+
+      //         aTableData.forEach(row => {
+      //               const match = row.top_activity_ids.find(item => item.result_id === row.active_result_id);
+      //               row.mapped_activity_id = match ? match.activity_id : null;
+      //             });
+      //             var oModel = new sap.ui.model.json.JSONModel({ results: aTableData });
+
+                 
+      //             this.getView().setModel(oModel, "excelData");
+      //             this.getView().getModel().refresh(true);
       var oModel1 = this.getOwnerComponent().getModel();
-           
           odataHelper.readData(oModel1, "/fetchAPI")
-                // .then(function(oData)=> {
-                //     // Handle successful data retrieval
-                //     console.log("Data received:", oData);
-                //     // Example:  Bind the data to a control
-                //     // this.getView().byId("myTable").setModel(new sap.ui.model.json.JSONModel(oData));
-                // })
-                .then((oData) => {
-                  // Arrow function preserves 'this'
+             .then((oData) => {
+                
                   var aTableData = oData.fetchAPI.result;
                   aTableData.forEach(row => {
                     const match = row.top_activity_ids.find(item => item.result_id === row.active_result_id);
@@ -208,24 +271,54 @@ sap.ui.define([
                   });
                   var oModel = new sap.ui.model.json.JSONModel({ results: aTableData });
 
-                  // Set to a named model
+                 
                   this.getView().setModel(oModel, "excelData");
-                  //this.getView().byId("table").setModel(new sap.ui.model.json.JSONModel(oData));
-                 // this.getView().byId("smartTable").rebindTable();
                   this.getView().getModel().refresh(true);
-                  that.getOwnerComponent().getModel("locModel").setProperty("/btEditEnabled",true);
+                  that.getOwnerComponent().getModel("locModel").setProperty("/btEditCEnabled",true);
                   this.oGlobalBusyDialog.close();
               })
               .catch((oError) => {
-                    // Handle the error
+                    
                     console.error("Error reading data:", oError);
-                    // Display an error message, etc.
+                    
                     this.oGlobalBusyDialog.close();
                 });
-     // this._chkFile().then(function () {
-        //return that._uploadFileExecute();
-     // });
+    
     },
+    handleTxtFilter: function(oEvent) {
+      const sQuery = oEvent.getParameter("query").trim();
+    if (!sQuery) {
+      this.byId("table").getBinding("rows").filter([]);
+      return;
+    }
+
+    const aFilters = [
+      new Filter("Site ID", FilterOperator.Contains, sQuery),
+      new Filter("Country Name", FilterOperator.Contains, sQuery),
+      new Filter("Material Name", FilterOperator.Contains, sQuery),
+      new Filter("Short Description", FilterOperator.Contains, sQuery),
+      new Filter("Spend Currency Unit", FilterOperator.Contains, sQuery),
+      new Filter("Weight Unit", FilterOperator.Contains, sQuery)
+    ];
+
+    // Handle numeric inputs for materialid, spendinmillions, weight
+    const fNum = parseFloat(sQuery);
+    if (!isNaN(fNum)) {
+      aFilters.push(
+        new Filter("Material ID", FilterOperator.EQ, fNum),
+        new Filter("Spend (in Millions)", FilterOperator.EQ, fNum),
+        new Filter("Weight", FilterOperator.EQ, fNum)
+      );
+    }
+
+    const oMultiFilter = new Filter({
+      filters: aFilters,
+      and: false // OR logic
+    });
+
+    this.byId("table").getBinding("rows").filter(oMultiFilter);
+  },
+
     onEditPress: function(oEvent){
       var that = this;
       this.getView().byId("btSave").setVisible(true);
@@ -234,20 +327,20 @@ sap.ui.define([
       var oButton = oEvent.getSource().getParent();
       var aCells = oButton.getCells();
       var oVBox = aCells[9]; 
-      var oInput = aCells[10];  
+      //var oInput = aCells[10];  
       var oSelect = oVBox.getItems()[0];
       
-      if (oSelect && oInput) {
-        oInput.setEditable(oInput.getEditable() === false);
+      if (oSelect) {
+       // oInput.setEditable(oInput.getEditable() === false);
         oSelect.setEditable(oSelect.getEditable() === false);
       }
       
-       const oContext = oEvent.getSource().getBindingContext();
-       const oModel = oContext.getModel();
-      const sPath = oContext.getPath();
+      //  const oContext = oEvent.getSource().getBindingContext();
+      //  const oModel = oContext.getModel();
+      // const sPath = oContext.getPath();
   
       // Update the model to enable the dropdown for this row
-      oModel.setProperty(sPath + "/isDropdownEnabled", true);
+     // oModel.setProperty(sPath + "/isDropdownEnabled", true);
      
 
     },
@@ -533,7 +626,8 @@ if (!this._selectedFile) {
 
 const requiredFields = ["Site ID", "Country Name", "Material ID", "Material Name", "Short Description"];
 const that = this;
-
+this.loadXLSXLibrary().then(function () {
+ // var file = oEvent.getParameter("files")[0];
 var reader = new FileReader();
 reader.onload = function (e) {
     var data = e.target.result;
@@ -573,18 +667,16 @@ reader.onload = function (e) {
     that.getView().setModel(oModel, "excelData");
 
     MessageBox.success("File uploaded and validated successfully.");
-   // that.getView().getModel("excelData").setProperty("/btEditEnabled",false); 
-    that.getOwnerComponent().getModel("locModel").setProperty("/btEditEnabled",false);
-    
+
     if (that._oUploadDialog) {
         that._oUploadDialog.close();
     }
-
-   
 };
 
-reader.readAsBinaryString(this._selectedFile);
-
+reader.readAsBinaryString(that._selectedFile);
+}).catch(function (error) {
+console.error(error);
+});
 
 },
 
