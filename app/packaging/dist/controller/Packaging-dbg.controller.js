@@ -3,11 +3,14 @@ sap.ui.define([
     "sap/ui/core/BusyIndicator",
     "sap/m/MessageBox",
     "pcf/com/acc/packaging/service/odataHelper",
-], (Controller,BusyIndicator,MessageBox,odataHelper) => {
+    "sap/ushell/Container"
+], (Controller,BusyIndicator,MessageBox,odataHelper,Container) => {
     "use strict";
 
     return Controller.extend("pcf.com.acc.packaging.controller.Packaging", {
         onInit() {
+          var that=this;
+          this.userID="demoTestUser";
           var excelModel = new sap.ui.model.json.JSONModel();
           this.getView().setModel(excelModel, "excelData");  
           this.PackagingState = this.getOwnerComponent().getState("Packaging");
@@ -15,10 +18,32 @@ sap.ui.define([
           
          this.getView().getModel("excelData").setProperty("/btEditEnabled", "InActive");
           this.oGlobalBusyDialog = new sap.m.BusyDialog(); 
-          this.getUserInfo();
+         // this.getUserInfo();
+
+        if (sap.ushell && sap.ushell.Container && sap.ushell.Container.getService) {
+        sap.ushell.Container.getServiceAsync("UserInfo").then(function(oUserInfo) {
+            if (oUserInfo) {
+                var uID = oUserInfo.getId(); // Get the user's ID
+                //console.log("Logged-in BTP user ID:", sUserId);
+
+                // You can also retrieve other user details:
+                that.userID = oUserInfo.getEmail();
+                // var sFirstName = oUserInfo.getFirstName();
+               // var sFullName = oUserInfo.getShellUserInfo().getFullName();
+
+                //console.log("Logged-in BTP user ID details:", sUserId +":"+sEmail);
+
+            }
+        }).catch(function(oError) {
+            console.error("Error getting UserInfo service:", oError);
+        });
+    } else {
+        console.warn("SAP Fiori Launchpad shell services not available. User information may not be accessible.");
+    }
         },
         onSaveChanges: function () {
           const that = this;
+          var userName;
             const oModel = this.getView().getModel("excelData");
 
             if (!oModel || !oModel.getData().results || oModel.getData().results.length === 0) {
@@ -58,9 +83,11 @@ sap.ui.define([
             "Spend_Currency_Unit":aData[i]['Spend Currency Unit']
               });
             }
+
+            
             
             const savePayload = {
-              "uName": "u1234",
+              "uName": this.userID,
               "Industry": "Dairy",
               "material":matPost
             }
@@ -167,8 +194,12 @@ sap.ui.define([
           onRunExecute: function(){
             const that = this;
           var oModel1 = this.getOwnerComponent().getModel();
+
+          const runPayload = {
+              "uName": this.userID
+            }
            
-          odataHelper.readData(oModel1, "/runAPI")
+          odataHelper.postData(oModel1, "/runAPI", runPayload)
                .then((oData) => {
 
                // console.log("RUN PAYLOAD" + oData.saveData.result );
@@ -233,7 +264,8 @@ sap.ui.define([
         onDownloadTemplate: function(){
           var fileName = "PackagingTemplate.xlsx";
           //  var sURL = sap.ui.require.toUrl(`zbue0004_massresui/DownloadTemplate/${fileName}`);
-          var sURL = `./DownloadTemplate/${fileName}`;
+          var sURL = sap.ui.require.toUrl(`pcf/com/acc/packaging/DownloadTemplate/${fileName}`);
+          //var sURL = `./DownloadTemplate/${fileName}`;
           const oA = document.createElement("a");
           oA.href = sURL;
           oA.style.display = "none";
@@ -261,7 +293,11 @@ sap.ui.define([
       //             this.getView().setModel(oModel, "excelData");
       //             this.getView().getModel().refresh(true);
       var oModel1 = this.getOwnerComponent().getModel();
-          odataHelper.readData(oModel1, "/fetchAPI")
+      const fetchPayload = {
+              "uName": this.userID
+            }
+
+          odataHelper.postData(oModel1, "/fetchAPI", fetchPayload)
              .then((oData) => {
                 
                   var aTableData = oData.fetchAPI.result;
@@ -726,13 +762,20 @@ onExport: function () {
 
   const aData = oModel.getData().results;
 
-  
-  const worksheet = XLSX.utils.json_to_sheet(aData);
+  this.loadXLSXLibrary().then(function () {
+
+const worksheet = XLSX.utils.json_to_sheet(aData);
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "Exported Data");
-
   
   XLSX.writeFile(workbook, "PackagingEFData.xlsx");
+
+}).catch(function (error) {
+console.error(error);
+});
+
+  
+  
 },
 onFilter: function () {
   var oSmartTable = this._getSmartTable();

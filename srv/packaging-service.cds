@@ -9,8 +9,8 @@ service PackagingEFCalculation {
      action saveData(uName: String, Industry: String, material: array of savePay) returns String;
      action editData(editPayload: array of editPay) returns String;
      function userInfoUAA() returns String;
-     action fetchAPI() returns String;
-      action runAPI() returns String;
+     action fetchAPI(uName: String) returns String;
+      action runAPI(uName: String) returns String;
  type fileUpload : {
     data       : LargeString;
     

@@ -60,7 +60,7 @@ console.log("User Info" + user);
 
   srv.on('runAPI',async(request) =>{
     const yourData= {
-      "User Name": "u1234"
+      "User Name": request.data.uName
       };
    const awsConnect= await cds.connect.to("AWSAPI");
    return await awsConnect.tx(request).post("/api/run",yourData)
@@ -68,9 +68,11 @@ console.log("User Info" + user);
   });
 
   srv.on('fetchAPI',async(request) =>{
+
     const yourData= {
-       "User Name": "u1234"
+       "User Name": request.data.uName
        };
+
     const awsConnect= await cds.connect.to("AWSAPI");
     return await awsConnect.tx(request).post("/api/fetch",yourData)
    });
@@ -102,7 +104,7 @@ console.log("User Info" + user);
    srv.on('saveData',async(request) =>{
 
     const pcfMaterials = request.data.material;
-  console.log("Use Infor in SAVE" + request.user.id);
+  //console.log("Use Infor in SAVE" + request.user.id);
     const mArray=[];
 
     for(let i=0;i<pcfMaterials.length;i++)
