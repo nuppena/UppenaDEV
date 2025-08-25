@@ -24,6 +24,7 @@
           "odataVersion": "2.0"
         }
       },
+      
       "locDataSource": {
 				"uri": "model/localModel.json",
 				"type": "JSON"

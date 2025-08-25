@@ -11,6 +11,7 @@ sap.ui.define([
         onInit() {
           var that=this;
           this.userID="demoTestUser";
+         
           var excelModel = new sap.ui.model.json.JSONModel();
           this.getView().setModel(excelModel, "excelData");  
           this.PackagingState = this.getOwnerComponent().getState("Packaging");
@@ -32,7 +33,7 @@ sap.ui.define([
                // var sFullName = oUserInfo.getShellUserInfo().getFullName();
 
                 //console.log("Logged-in BTP user ID details:", sUserId +":"+sEmail);
-
+                 that.onExecute();
             }
         }).catch(function(oError) {
             console.error("Error getting UserInfo service:", oError);
@@ -40,11 +41,19 @@ sap.ui.define([
     } else {
         console.warn("SAP Fiori Launchpad shell services not available. User information may not be accessible.");
     }
+     
         },
         onSaveChanges: function () {
           const that = this;
           var userName;
-            const oModel = this.getView().getModel("excelData");
+
+            //const oModel = this.getView().getModel("excelData");
+        var exData = this.getOwnerComponent().getModel("locModel").getProperty("/excelData");
+             var oModel = new sap.ui.model.json.JSONModel();
+            oModel.setData({ results: exData });
+         //that.getView().setModel(oModel, "excelData");
+
+
 
             if (!oModel || !oModel.getData().results || oModel.getData().results.length === 0) {
                 MessageBox.warning("No data available to save.");
@@ -280,6 +289,7 @@ sap.ui.define([
 */
     onExecute: function () {
       const that = this;
+      this.getView().byId("table").setBusy(true);
       // var aTableData = this.getOwnerComponent().getModel("locModel").getProperty("/d/fetchAPI/result/");
       // this.getView().setModel(oModel1, "excelData");
 
@@ -312,12 +322,14 @@ sap.ui.define([
                   this.getView().getModel().refresh(true);
                   that.getOwnerComponent().getModel("locModel").setProperty("/btEditCEnabled",true);
                   this.oGlobalBusyDialog.close();
+                   this.getView().byId("table").setBusy(false);
               })
               .catch((oError) => {
                     
                     console.error("Error reading data:", oError);
                     
                     this.oGlobalBusyDialog.close();
+                     this.getView().byId("table").setBusy(false);
                 });
     
     },
@@ -357,8 +369,8 @@ sap.ui.define([
 
     onEditPress: function(oEvent){
       var that = this;
-      this.getView().byId("btSave").setVisible(true);
-      this.getView().byId("btRun").setVisible(false);
+      // this.getView().byId("btSave").setVisible(true);
+      // this.getView().byId("btRun").setVisible(false);
 
       var oButton = oEvent.getSource().getParent();
       var aCells = oButton.getCells();
@@ -698,11 +710,16 @@ reader.onload = function (e) {
     }
 
     // All rows are valid — bind to model
-    var oModel = new sap.ui.model.json.JSONModel();
-    oModel.setData({ results: jsonData });
-    that.getView().setModel(oModel, "excelData");
+    // var oModel = new sap.ui.model.json.JSONModel();
+    // oModel.setData({ results: jsonData });
+    // that.getView().setModel(oModel, "excelData");
+    that.getOwnerComponent().getModel("locModel").setProperty("/excelData",jsonData);
 
-    MessageBox.success("File uploaded and validated successfully.");
+    if(jsonData || jsonData.length > 0){
+      that.onSaveChanges();
+    }
+
+   // MessageBox.success("File uploaded and validated successfully.");
 
     if (that._oUploadDialog) {
         that._oUploadDialog.close();
@@ -753,28 +770,57 @@ onOpenUploadDialog: function () {
     this._oUploadDialog.open();
 },
 onExport: function () {
-  const oModel = this.getView().getModel("excelData");
+//   const oModel = this.getView().getModel("excelData");
 
+//   if (!oModel || !oModel.getData().results || oModel.getData().results.length === 0) {
+//       sap.m.MessageBox.warning("No data available to export.");
+//       return;
+//   }
+//   const aData = oModel.getData().results;
+
+//   this.loadXLSXLibrary().then(function () {
+
+// const worksheet = XLSX.utils.json_to_sheet(aData);
+//   const workbook = XLSX.utils.book_new();
+//   XLSX.utils.book_append_sheet(workbook, worksheet, "Exported Data");
+  
+//   XLSX.writeFile(workbook, "PackagingEFData.xlsx");
+
+// }).catch(function (error) {
+// console.error(error);
+// });
+const oModel = this.getView().getModel("excelData");
+ 
   if (!oModel || !oModel.getData().results || oModel.getData().results.length === 0) {
       sap.m.MessageBox.warning("No data available to export.");
       return;
   }
-
-  const aData = oModel.getData().results;
+ 
+  var aData = oModel.getData().results;
+   
 
   this.loadXLSXLibrary().then(function () {
-
-const worksheet = XLSX.utils.json_to_sheet(aData);
-  const workbook = XLSX.utils.book_new();
+    var worksheet = XLSX.utils.json_to_sheet(aData);
+  const headersToKeep = ["Site ID", "Country Name", "Material ID", "Material Name", "Short Description", "Weight", "Weight Unit", "Spend (in Millions)", "Spend Currency Unit", "mapped_activity_id", "Total Emission", "error_status"];  // Replace with your actual field names
+ 
+  // Create filtered data array containing only the selected columns
+  const filteredData = aData.map(item =>
+    Object.fromEntries(
+      headersToKeep.map(h => [h, item[h]])
+    )
+  );
+ // Generate worksheet and workbook with specified headers order
+  var worksheet = XLSX.utils.json_to_sheet(filteredData, { header: headersToKeep });
+  var workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "Exported Data");
-  
+ 
+ 
   XLSX.writeFile(workbook, "PackagingEFData.xlsx");
-
-}).catch(function (error) {
+      }).catch(function (error) {
 console.error(error);
-});
-
-  
+  });
+ 
+ 
   
 },
 onFilter: function () {

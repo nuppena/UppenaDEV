@@ -198,6 +198,7 @@
                     rows="{excelData>/results}"
                     selectionMode="None"
                     enableBusyIndicator="true"
+                    busy="true"
                     enableCellFilter="true"
                     enableColumnReordering="true"
                     columnHeaderVisible="true"
@@ -230,19 +231,19 @@
                             press="onExport"
                             class="sapUiTinyMarginEnd"
                         />
-                         <Button
+                         <!-- <Button
                             id="btRun"
                             text="Run"
                             type="Emphasized"
                             press="onSaveChanges"
                             class="sapUiTinyMarginEnd"
-                        />
+                        /> -->
                         <Button
                             id="btSave"
                             text="Run"
                             type="Emphasized"
                             press="onEditChanges"
-                            visible="false"
+                            visible="true"
                         />
 
                     </OverflowToolbar>
@@ -264,6 +265,7 @@
                   
                         <table:Column
                             label="CountryName"
+                            sortProperty="Country Name"
                             filterProperty="Country Name"
                             width="110px"
                         >
@@ -292,6 +294,7 @@
                   
                         <table:Column
                             label="MaterialName"
+                            sortProperty="Material Name"
                             filterProperty="Material Name"
                             width="200px"
                         >
@@ -330,6 +333,7 @@
                   
                         <table:Column
                             label="WeightUnit"
+                             sortProperty="Weight Unit"
                             filterProperty="Weight Unit"
                             width="100px"
                         >
@@ -366,12 +370,8 @@
                                 <Text text="{excelData>Spend Currency Unit}" />
                             </table:template>
                         </table:Column>
-
-                  
                         <table:Column
                             label="MappedActivityID"
-                            sortProperty="MappedActivityID"
-                            filterProperty="MappedActivityID"
                             width="200px"
                         >
                             <table:template>
@@ -393,12 +393,8 @@
                                 </VBox>
                             </table:template>
                         </table:Column>
-
-                  
                         <table:Column
                             label="TotalEmissions(kgCO₂e)"
-                            sortProperty="TotalEmission"
-                            filterProperty="TotalEmission"
                             width="100px"
                         >
                             <table:template>
@@ -426,8 +422,8 @@
 
                         <table:Column
                             label="ErrorStatus"
-                            sortProperty="ErrorStatus"
-                            filterProperty="ErrorStatus"
+                            sortProperty="error_status"
+                            filterProperty="error_status"
                             width="200px"
                          >
                             <table:template>
